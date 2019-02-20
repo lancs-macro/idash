@@ -1,0 +1,12 @@
+name: international-housing-observatory
+title: international-housing-observatory
+username:
+account: lancs-macro
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 705554
+bundleId: 1885935
+url: https://lancs-macro.shinyapps.io/international-housing-observatory/
+when: 1550626813.29202
+asMultiple: FALSE
+asStatic: FALSE

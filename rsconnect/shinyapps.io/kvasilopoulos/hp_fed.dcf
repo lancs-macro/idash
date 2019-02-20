@@ -1,0 +1,13 @@
+name: hp_fed
+title: hp_fed
+username:
+account: kvasilopoulos
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 526976
+bundleId: 1654405
+url: https://kvasilopoulos.shinyapps.io/hp_fed/
+when: 1540149313.02627
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: 01-dallas-fed.R|02-Analysis.R

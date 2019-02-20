@@ -1,0 +1,254 @@
+<!Doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF=8">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="style.css">
+
+    <link rel="stylesheet" href="https://cdn.rawgit.com/jpswalsh/academicons/master/css/academicons.min.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+        crossorigin="anonymous">
+
+</head>
+
+<body>
+
+    <!--Main Area -->
+    <main id="main">
+
+        <!-- <section id="banner"> -->
+
+        <div class="banner banner-methodology">
+            <div class="container">
+                <h1>Data Sources & Methodology</h1>
+            </div>
+        </div>
+
+
+
+        <section id="methodology" class="grid">
+            <div class="content-wrap">
+                <div class="content-text">
+                    <h2 class="content-title"> Monitoring Exuberance and Collapses in Housing Markets with the GSADF
+                        test of Phillips et al. (2015a,b)</h2>
+                    <h3 class="content-subtitle">An Application to International Housing Markets</h3>
+                    <div class="line"></div>
+                    <p>
+                        A rapid pace of real house price appreciation by itself does not necessarily imply that real
+                        house prices are becoming out of step with fundamentals. Still, we recognize that real house
+                        price increases today could become out of step with fundamentals supported instead by the
+                        expectation of robust future price increases. If enough buyers share the same beliefs about the
+                        future prospects in the housing market, their purchases will help drive current house prices up
+                        and validate the expectation that strong house price gains will continue. This self-fulfilling
+                        prophecy keeps the housing market misaligned from its fundamentals until enough investors
+                        become leery of a bust, the flow of money into housing dries out, and eventually the feared
+                        collapse occurs.
+
+                    </p>
+                    <p>
+                        An expectations-driven real house price appreciation may lead to a misallocation of resources
+                        in the economy and distorted investment patterns. Therefore, monitoring for such episodes of
+                        exuberance (booms) and collapse (busts) in housing markets may help avoid a repeat of the
+                        economic trauma caused by the international boom-bust housing cycle that preceded the 2008
+                        great recession (Pavlidis et al., 2016). We take a look at International housing markets (Mack
+                        and Martínez-García, 2011) with the novel Generalized Sup ADF (GSADF) test of Phillips et al.
+                        (2015a,b) to detect empirical evidence of exuberance. The latest findings across all
+                        international housing markets are summarized in this website.
+                    </p>
+                </div>
+            </div>
+        </section>
+        <section id="methodology" class="grid">
+            <div class="content-wrap">
+                <div class="content-text">
+                    <h2 class="content-title">Detecting Exuberance and Collapses with the GSADF Test</h2>
+                    <div class="line"></div>
+
+                    <p>
+                        The Globalization Institute of the Federal Reserve Bank of Dallas produces an international
+                        house price database, which comprises quarterly house price and personal disposable income
+                        (PDI) series for a number of countries. All data series begin in first quarter 1975. A detailed
+                        description
+                        of the sources and methodology can be found in Mack and Martínez-García (2011), which is
+                        updated
+                        whenever modifications to the database occur.
+                    </p>
+                    <p>
+                        We select a house price index for each country that is most consistent with the quarterly U.S.
+                        house price index for existing single-family houses produced by the Federal Housing Finance
+                        Agency.
+                        We extend the preferred series for each country back to first quarter 1975 either with
+                        historical
+                        data or with data from secondary sources. Each country’s house price index is seasonally
+                        adjusted
+                        over the entire sample period with an unobserved components time series model and then rebased
+                        to
+                        2005 = 100.
+
+                    </p>
+                    <p>
+
+                        PDI series are quoted in per capita terms using working-age population. Both the house price
+                        and
+                        PDI series are quoted in nominal and real terms. Real values are computed using the personal
+                        consumption expenditure deflator. For each series, we produce a weighted average of all
+                        countries
+                        in the database, using purchasing power parity-adjusted gross domestic product shares in 2005.
+                    </p>
+
+
+                </div>
+            </div>
+        </section>
+        <section id="methodology" class="grid">
+            <div class="content-wrap">
+                <div class="content-text">
+                    <h2 class="content-title">International Housing Data</h2>
+                    <div class="line"></div>
+
+
+                    <p>
+                        Mildly explosive behavior is modeled by an autoregressive process with a root that exceeds
+                        unity,
+                        but remains within the vicinity of one (Phillips et al., 2015a,b). This represents a small
+                        departure from martingale behavior, but is consistent with the submartingale property often
+                        used in
+                        the asset pricing literature to model self-fulfilling prophecies (rational bubbles). The GSADF
+                        test
+                        achieves this by recursively implementing a right-tailed ADF-type regression test using a
+                        rolling
+                        window procedure (Phillips et al., 2015a,b; Pavlidis et al, 2016).
+
+                    </p>
+                    <p>
+                        More specifically, the GSADF test considers an ADF regression for a rolling interval beginning
+                        with
+                        a fraction r1 and ending with a fraction r2 of the total number of observations, with the size
+                        of
+                        the window being rw = r2 − r1. The parameters in the ADF regression are estimated by ordinary
+                        least
+                        squares (OLS) for and then an ADF statistic is calculated to test the null of a unit-root
+                        against
+                        the right-sided alternative of mildly explosive behavior.
+                    </p>
+                    <p>
+
+                        Phillips et al. (2015a,b) formulated a procedure whereby the ADF statistic is repeatedly
+                        calculated
+                        for a fixed share r2 of the whole sample and the window size is expanded from an initial
+                        fraction
+                        r0 to r2. The supremum of this sequence of statistics for each r1 ∈ [0, r2 - r0] is the sup ADF
+                        (SADF) statistic. The generalized sup ADF (GSADF) statistic is then constructed from the
+                        corresponding sequence of SADF statistics for each r2 ∈ [r0, 1].
+                    </p>
+                    <p>
+                        The GSADF approach uses a variable window width approach, allowing starting as well as ending
+                        points to change within a predefined range [r0, 1], which enhances the flexibility of the ADF
+                        framework to identify consistently, periodically-occurring periods of mildly explosive behavior
+                        within a sample. The resulting GSADF statistic can then be used to test the null hypotheses of
+                        unit
+                        root against its right-tailed mildly explosive alternative by comparing it to its corresponding
+                        critical values. Further technical details on the implementation of the GSADF procedure to
+                        housing
+                        data, specifically for international housing markets, can be found in Pavlidis at al. (2016).
+                    </p>
+
+
+                </div>
+            </div>
+        </section>
+        <section id="methodology" class="grid">
+            <div class="content-wrap">
+                <div class="content-text">
+                    <h2 class="content-title">Reporting the Evidence</h2>
+                    <div class="line"></div>
+
+                    <p>
+                        Statistical significance based on the GSADF procedure can be assessed against critical values
+                        obtained under the null hypothesis of no-explosive behavior. The Backward SADF (BSADF)
+                        statistic computed over the sequence of ADF for all possible r1 and r2 (Phillips et al.
+                        (2015a,b)): when above the 95% critical value – indicates evidence of mildly explosive behavior
+                        at conventional statistical levels. GSADF statistic below 95% critical value, but above 90% (or
+                        for some just 80%) critical value – indicates that caution seems warranted, but there is not
+                        enough evidence to detect mildly explosive behavior at conventional statistical significance
+                        levels. GSADF statistic below 90% (or 80%) critical value – indicates that there is not enough
+                        evidence to signal an episode of mildly explosive behavior.
+                    </p>
+
+                </div>
+            </div>
+        </section>
+
+
+
+        <section id="methodology-code" class="grid">
+            <div class="content-wrap">
+                <div class="content-text">
+                    <div class="row">
+
+                        <div class="col-sm-4">
+                            <img src="screen.jpg" alt="Code" style="width:90%">
+                        </div>
+
+                        <div class="col-sm-8">
+                            <h2 class="code-title"> Code </h2>
+                            <div class="code-wrapper">
+                                <p>
+                                    We have created the R package <a href="https://cran.r-project.org/web/packages/exuber/index.html">exuber</a>
+                                    which implements the recursive unit root tests of Phillips, P. C., Shi, S. and Yu,
+                                    J. (2015a) for dating periods of explosive dynamics (exuberance). The package also
+                                    simulates a variety of periodically-collapsing bubble processes. The estimation code utilizes
+                                    the matrix inversion lemma in the recursive least squares algorithm which results in
+                                    significant speed improvements.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <section id="publications" class="grid">
+            <div class="content-wrap">
+                <h2 class="content-title"> Related Literature </h2>
+                <!-- <h3 class="content-subtitle"> Mpla Mpla </h3> -->
+                <div class="line"></div>
+                <ul>
+                        <li>
+                        <div class="row">
+                          <div class="col-xs-2">
+                            <i class="fas fa-graduation-cap fa-3x"></i>
+                          </div>
+                          <div class="col-xs-10">
+                            <p><strong> Phillips, P.C.B., Shi, S.-P., and Yu, J. (2015a)</strong></p>
+                            <p><a href="https://doi.org/10.1111/iere.12132 " target="_blank">
+                              Testing for multiple bubbles: historical episodes of exuberance and collapse in the S&P 500</a></p>
+                            <p>International Economic Review</p>
+                          </div>
+                        </div>
+                      </li>
+          
+                      <li>
+                        <div class="row">
+                          <div class="col-xs-2">
+                            <i class="fas fa-graduation-cap fa-3x"></i>
+                          </div>
+                          <div class="col-xs-10">
+                            <p><strong> Phillips, P.C.B., Shi, S.-P., and Yu, J. (2015b)</strong></p>
+                            <p><a href="https://doi.org/10.1111/iere.12131" target="_blank">
+                              Testing for multiple bubbles: limit theory of real time detectors</a></p>
+                            <p>International Economic Review</p>
+                          </div>
+                        </div>
+                      </li>
+                </ul>
+            </div>
+        </section>
+
+
+    </main>
+</body>
+
+</html>
