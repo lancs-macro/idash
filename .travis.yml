@@ -23,6 +23,9 @@ before_install:
   - "if [ $(phantomjs --version) != $PHANTOMJS_VERSION ]; then hash -r; fi"
   - "phantomjs --version"
 
+r_github_packages:
+  - nik01010/dashboardthemes 
+
 script:
   - R -f run_tests.R
   
