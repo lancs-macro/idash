@@ -100,7 +100,6 @@ body <- dashboardBody(
   
   tags$head(
     
-    
     # tags$link(rel = "icon", type = "image/jpg", href = "logo.jpg"),
     
     includeHTML("content/google-analytics.html"),
