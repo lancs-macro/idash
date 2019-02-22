@@ -100,9 +100,10 @@ body <- dashboardBody(
   
   tags$head(
     
-    tags$link(rel = "icon", type = "image/jpg", href = "logo.jpg"),
     
-    tags$title("asdfsadfsadfsadf"),
+    # tags$link(rel = "icon", type = "image/jpg", href = "logo.jpg"),
+    
+    includeHTML("content/google-analytics.html"),
     
     tags$link(rel = "stylesheet", type = "text/css", 
               href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
@@ -240,7 +241,7 @@ body <- dashboardBody(
                   plotOutput("plot4"),
                   width = 6),
                 p("There is exuberance when the statistic (blue line) exceeds the critical value 
-                  (red line)", style = "text-align:center;")
+                  (red line).", style = "text-align:center;")
               ),
               
               fluidRow(
@@ -301,9 +302,9 @@ body <- dashboardBody(
                        tabPanel(dataTableOutput("estimation_income"), 
                                 title = "Real House Price to Income Exuberance Statistics"),
                        tabPanel(dataTableOutput("cv_seq"), 
-                                title = "BSADF critical value sequence statistics"),
+                                title = "BSADF Critical Value Sequence Statistics"),
                        tabPanel(dataTableOutput("cv_table"), 
-                                title = "GSADF statistics & critical values")
+                                title = "GSADF Statistics & Critical Values")
                 )
               )
             ),

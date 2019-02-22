@@ -213,7 +213,7 @@ cv_seq <- mc_con %>%
 
 cv_table <- 
   tibble(
-    Counties = names(price)[-1],
+    Countries = names(price)[-1],
     gsadf_rhpi = radf_price$gsadf,
     gsadf_hpi_dpi = radf_income$gsadf,
     gsadf_cv90 = mc_con$gsadf_cv[1],
