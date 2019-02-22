@@ -2,8 +2,9 @@ Imports:
   shiny,
   shinytest,
   shinydashboard,
-  dashboardthemes,
   DT,
   tidyverse,
   glue,
   shinytest
+Remotes:
+  nik01010/dashboardthemes
