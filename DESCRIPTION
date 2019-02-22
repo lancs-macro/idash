@@ -5,6 +5,5 @@ Imports:
   dashboardthemes,
   DT,
   tidyverse,
-  glue
-Remotes:
-  rstudio/shinytest@dev
+  glue,
+  shinytest

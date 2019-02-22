@@ -25,3 +25,8 @@ before_install:
 
 script:
   - R -f run_tests.R
+  
+notifications:
+  email:
+    on_success: never # default: change
+    on_failure: always # default: always
