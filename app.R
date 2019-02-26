@@ -32,15 +32,15 @@ if (src == "primary") {
 if (load) {
   store <- c((items <- c("price", "income")),
              c("cnames"),
-             paste0("summary_", items),
-             paste0("datestamp_", items),
-             paste0("plot_", items),
-             paste0("autoplot_", items),
-             paste0("autoplot_datestamp_", items),
-             paste0("estimation_", items),
+             glue("summary_{items}"),
+             glue("datestamp_{items}"),
+             glue("plot_{items}"),
+             glue("autoplot_{items}"),
+             glue("autoplot_datestamp_{items}"),
+             glue("estimation_{items}"),
             "cv_seq","cv_table")
   
-  path_store <- paste0("data/RDS/", store, ".rds")
+  path_store <- glue("data/RDS/{store}.rds")
   
   for (i in seq_along(path_store)) assign(store[i], readRDS(file = path_store[i]))
 }
@@ -51,7 +51,7 @@ if (load) {
 header <- dashboardHeader(
 
   title =  "International Housing Observatory",
-  titleWidth = 400
+  titleWidth = 350
 
   # Return to original website
   # tags$li(
@@ -178,7 +178,7 @@ body <- dashboardBody(
                              house price to disposable income ratios (housing affordability) 
                             starting in 1975, 
                              exuberance statistics, as well as date-stamping of the 
-                            specific periods of exubernace.")
+                            specific periods of exuberance.")
                   ),
                   column(6,
                          style = "padding-left:5em;",
@@ -239,8 +239,10 @@ body <- dashboardBody(
                   title = "Real Price to Disposable Income Ratio", 
                   plotOutput("plot4"),
                   width = 6),
-                p("There is exuberance when the statistic (blue line) exceeds the critical value 
-                  (red line).", style = "text-align:center;")
+                p(em("There is exuberance when the", 
+                span("statistic", style = "color:blue"), " exceeds the",
+                span(" critical value",  style = "color:red"),"."), 
+                style = "text-align:center;")
               ),
               
               fluidRow(
@@ -251,8 +253,6 @@ body <- dashboardBody(
                     style = "font-size:22px;text-align:center;")
                 )
               ),
-              
-              
               fluidRow(
                 box(
                   title = "Real House Prices",
@@ -262,7 +262,9 @@ body <- dashboardBody(
                   title = "Real Price to Disposable Income Ratio", 
                   dataTableOutput("table4")
                 )
-              )
+              ),
+              uiOutput("ui")
+              
             ),
             includeHTML("content/footer.html")
     ),
@@ -320,7 +322,7 @@ body <- dashboardBody(
 
 server <- function(input, output, session) {
   
-  
+ 
   # overview ----------------------------------------------------------------
   
   output$autoplot_datestamp_price <- 

@@ -1,10 +1,5 @@
 
-
-library(lubridate)
-library(tidyr)
 library(rlang)
-library(purrr)
-library(ggplot2)
 
 extract_yq <- function(object) {
   yq <- object %>% 
@@ -44,7 +39,8 @@ diagnostics_income <-
   radf_income %>% 
   diagnostics(cv = mc_con)
 
-cnames <- union(diagnostics_price$accepted, diagnostics_income$accepted)
+cnames <- names(price[-1])
+#union(diagnostics_price$accepted, diagnostics_income$accepted)
 
 datestamp_price <-
   radf_price %>% 
@@ -68,7 +64,6 @@ scale_custom <- function(object, div = 10) {
     yq %>% 
       slice(seq_slice) %>% 
       pull(!!parse_expr(variable))
-    
   }
   
   scale_x_date(
@@ -82,18 +77,28 @@ scale_custom <- function(object, div = 10) {
 
 autoplot_price <- 
   radf_price %>% 
-  autoplot(cv = mc_con) %>% 
+  autoplot(cv = mc_con, include = TRUE) %>% 
   map( ~.x + ggtitle("") +
          scale_custom(object = fortify(radf_price))
   )
-        
+
+autoplot_price[diagnostics_price$rejected] <- 
+  autoplot_price[diagnostics_price$rejected] %>% 
+  map( ~ .x + labs(caption = "The series does not exhibit exuberant behavior")+
+         theme(plot.caption = element_text(size=12)))
 
 autoplot_income <- 
   radf_income %>% 
-  autoplot(cv = mc_con) %>% 
+  autoplot(cv = mc_con, include = TRUE) %>% 
   map( ~.x + ggtitle("") +
          scale_custom(object = fortify(radf_price))
   )
+
+autoplot_income[diagnostics_income$rejected] <- 
+  autoplot_income[diagnostics_income$rejected] %>% 
+  map( ~ .x + labs(caption = "The series does not exhibit exuberant behavior") +
+         theme(plot.caption = element_text(size=12)))
+
 
 # autoplot datestamp ------------------------------------------------------
 
@@ -226,15 +231,15 @@ cv_table <-
 
 store <- c((items <- c("price", "income")),
            c("cnames"),
-           paste0("summary_", items),
-           paste0("datestamp_", items),
-           paste0("plot_", items),
-           paste0("autoplot_", items),
-           paste0("autoplot_datestamp_", items),
-           paste0("estimation_", items),
-           "cv_seq", "cv_table")
+           glue("summary_{items}"),
+           glue("datestamp_{items}"),
+           glue("plot_{items}"),
+           glue("autoplot_{items}"),
+           glue("autoplot_datestamp_{items}"),
+           glue("estimation_{items}"),
+           "cv_seq","cv_table")
 
-path_store <- paste0("data/RDS/", store, ".rds")
+path_store <- glue("data/RDS/{store}.rds")
 
 for (i in seq_along(store)) saveRDS(get(store[i]), file = path_store[i])
 

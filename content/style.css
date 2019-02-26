@@ -488,3 +488,7 @@ img {
   text-decoration: underline;
   color: rgb(23, 87, 151);
 }
+
+#methodology-code a:hover {
+  color:rgb(255, 208, 37);
+}
