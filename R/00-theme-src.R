@@ -36,7 +36,7 @@ contrast <- grey
 
 # Theme options
 
-theme_boe_website <- shinyDashboardThemeDIY(
+theme_boe_website <- dashboardthemes::shinyDashboardThemeDIY(
   
   ### general
   appFontFamily = "Arial"

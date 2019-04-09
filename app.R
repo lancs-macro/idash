@@ -1,10 +1,9 @@
-library(shiny)
-library(shinydashboard)
-library(dashboardthemes)
-
-library(DT)
-library(tidyverse)
-library(glue)
+library(shiny, quietly = TRUE, warn.conflicts = FALSE)
+library(shinydashboard, quietly = TRUE, warn.conflicts = FALSE)
+# library(dashboardthemes)
+library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
+library(ggplot2, quietly = TRUE, warn.conflicts = FALSE)
+library(DT, quietly = TRUE, warn.conflicts = FALSE)
 
 
 # Set Options -------------------------------------------------------------
@@ -12,38 +11,31 @@ library(glue)
 src <- "primary" 
 load <- TRUE
 
+# Load everything ---------------------------------------------------------
+
+if (load) {
+  path_store <- list.files("data/RDS", full.names = TRUE)
+  store <-  stringr::str_remove(list.files("data/RDS"), ".rds")
+
+  for (i in seq_along(path_store)) assign(store[i], readRDS(file = path_store[i]))
+}
+
 
 # Source ------------------------------------------------------------------
 
 if (src == "primary") {
-  suppressMessages(
-    list.files(c("Rscripts"), full.names = TRUE, pattern = "-src.R") %>% 
-      map(source)
-  )
+  # suppressMessages(
+    list.files(c("R"), full.names = TRUE, pattern = "-src.R") %>% 
+      purrr::map(source)
+  # )
 }else {
-  suppressMessages(
-    list.files(c("Rscripts"), full.names = TRUE, pattern = ".R") %>% 
-      map(source)
-  )
+  # suppressMessages(
+    list.files(c("R"), full.names = TRUE, pattern = ".R") %>% 
+      purrr::map(source)
+  # )
 }
 
-# Load everything ---------------------------------------------------------
 
-if (load) {
-  store <- c((items <- c("price", "income")),
-             c("cnames"),
-             glue("summary_{items}"),
-             glue("datestamp_{items}"),
-             glue("plot_{items}"),
-             glue("autoplot_{items}"),
-             glue("autoplot_datestamp_{items}"),
-             glue("estimation_{items}"),
-            "cv_seq","cv_table")
-  
-  path_store <- glue("data/RDS/{store}.rds")
-  
-  for (i in seq_along(path_store)) assign(store[i], readRDS(file = path_store[i]))
-}
 
 # Header ------------------------------------------------------------------
 
@@ -118,6 +110,14 @@ body <- dashboardBody(
     type = "text/css",
     'div.dt-buttons {float: right;}'
   ),
+  tags$style(
+    type = "text/css",
+    '.box-title {color:rgb(49, 70, 88);}'
+  ),
+  tags$style(
+    type = "text/css",
+    '.box-subtitle {color:rgb(23, 87, 151);font-size:15px;}'
+  ),
   
   
   
@@ -149,11 +149,15 @@ body <- dashboardBody(
                 style = "padding:1em 0 2em 1.5em;"),
               
               fluidRow(
-                box(title = "Real House Prices",
-                    plotOutput("autoplot_datestamp_price")
+                box2(
+                  title = "Real House Prices",
+                  subtitle = "Peak-to-Trough Contraction Periods",
+                  plotOutput("autoplot_datestamp_price")
                 ),
-                box(title = "Real Price to Disposable Income Ratio ",
-                    plotOutput("autoplot_datestamp_income")
+                box2(
+                  title = "House-Price-to-Income Ratio",
+                  subtitle = "Peak-to-Trough Contraction Periods",
+                  plotOutput("autoplot_datestamp_income")
                 )
               )
             ),
@@ -175,28 +179,26 @@ body <- dashboardBody(
                   column(6, 
                          p(
                            "This page provides figures for real house prices and
-                             house price to disposable income ratios (housing affordability) 
-                            starting in 1975, 
-                             exuberance statistics, as well as date-stamping of the 
+                             house-price-to-disposable-income ratios (housing affordability) 
+                            starting in 1975, exuberance statistics, as well as date-stamping of the 
                             specific periods of exuberance.")
                   ),
                   column(6,
                          style = "padding-left:5em;",
                          selectInput("country", "Select Country:", cnames)
                   )
-                  
               ),
               
               
               fluidRow(
                 box(
                   title = "Real House Prices",
-                  plotOutput("plot1"),
+                  plotOutput("plot_price"),
                   width = 6
                 ),
                 box(
-                  title = "Real Price to Disposable Income Ratio", 
-                  plotOutput("plot3"),
+                  title = "House-Price-to-Income Ratio", 
+                  plotOutput("plot_income"),
                   width = 6
                 )
               ),
@@ -215,7 +217,7 @@ body <- dashboardBody(
                   tableOutput("table1")
                 ),
                 box(
-                  title = "Real Price to Disposable Income Ratio", 
+                  title = "House-Price-to-Income Ratio", 
                   tableOutput("table2")
                 )
               ),
@@ -225,7 +227,7 @@ body <- dashboardBody(
                 box(
                   width = 12,
                   background = "blue",
-                  p("Date Stamping Periods of Exuberance", 
+                  p("Date-Stamping Periods of Exuberance", 
                     style = "font-size:22px;text-align:center;")
                 )
               ),
@@ -233,23 +235,27 @@ body <- dashboardBody(
               fluidRow(
                 box(
                   title = "Real House Prices",
-                  plotOutput("plot2"),
+                  plotOutput("autoplot_price"),
                   width = 6),
                 box(
-                  title = "Real Price to Disposable Income Ratio", 
-                  plotOutput("plot4"),
+                  title = "House-Price-to-Income Ratio", 
+                  plotOutput("autoplot_income"),
                   width = 6),
-                p(em("There is exuberance when the", 
-                span("statistic", style = "color:blue"), " exceeds the",
-                span(" critical value",  style = "color:red"),"."), 
-                style = "text-align:center;")
+                p(
+                  em(
+                    span("There is exuberance when the"), 
+                    span("statistic", style = "color:blue"), 
+                    span("exceeds the"),
+                    span("critical value.",  style = "color:red;")
+                ), 
+                style = "text-align:center;font-size:14px;")
               ),
               
               fluidRow(
                 box(
                   width = 12,
                   background = "blue",
-                  p("Date Stamping Periods of Exuberance Table", 
+                  p("Date-Stamping Periods of Exuberance Table", 
                     style = "font-size:22px;text-align:center;")
                 )
               ),
@@ -259,12 +265,10 @@ body <- dashboardBody(
                   dataTableOutput("table3")
                 ),
                 box(
-                  title = "Real Price to Disposable Income Ratio", 
+                  title = "House-Price-to-Income Ratio", 
                   dataTableOutput("table4")
                 )
-              ),
-              uiOutput("ui")
-              
+              )
             ),
             includeHTML("content/footer.html")
     ),
@@ -283,7 +287,7 @@ body <- dashboardBody(
                        tabPanel(dataTableOutput("data_price"), 
                                 title = "Real House Prices"),
                        tabPanel(dataTableOutput("data_income"), 
-                                title = "Real House Price to Income")
+                                title = "House-Price-to-Income Ratio")
                 )
               )
             ),
@@ -301,7 +305,7 @@ body <- dashboardBody(
                        tabPanel(dataTableOutput("estimation_price"), 
                                 title = "Real House Price Exuberance Statistics"),
                        tabPanel(dataTableOutput("estimation_income"), 
-                                title = "Real House Price to Income Exuberance Statistics"),
+                                title = "House-Price-to-Income Exuberance Statistics"),
                        tabPanel(dataTableOutput("cv_seq"), 
                                 title = "BSADF Critical Value Sequence Statistics"),
                        tabPanel(dataTableOutput("cv_table"), 
@@ -327,69 +331,133 @@ server <- function(input, output, session) {
   
   output$autoplot_datestamp_price <- 
     renderPlot({
-      autoplot_datestamp_price
+      exuber::datestamp(radf_price, cv = mc_con) %>% 
+        exuber::autoplot()
     })
   output$autoplot_datestamp_income <- 
     renderPlot({
-      autoplot_datestamp_income
+      exuber::datestamp(radf_income, cv = mc_con) %>% 
+        exuber::autoplot()
     })
   
   
   # Analysis ----------------------------------------------------------------
   
   
-  output$table1 <- renderTable({
-    summary_price[[input$country]]},
-    striped = TRUE, bordered = TRUE,  
-    width = '100%', rownames = TRUE,
-    align = 'ccccc')
+  output$plot_price <- renderPlot({
+    plot_var(price, input$country)})
+  
+  output$plot_income <- renderPlot({
+    plot_var(price, input$country)})
+  
+  output$table1 <-
+    renderTable({
+      summary(radf_price, mc_con) %>% 
+        purrr::pluck(input$country)},
+      striped = TRUE, bordered = TRUE,  
+      width = '100%', rownames = TRUE,
+      align = 'ccccc')
   
   output$table2 <- renderTable({
-    summary_income[[input$country]]},
+    summary(radf_income, mc_con) %>% 
+      purrr::pluck(input$country)},
     striped = TRUE, bordered = TRUE,  
     width = '100%', rownames = TRUE,
     align = 'ccccc')
   
-  output$table3 <- renderDataTable({
-    datestamp_price[[input$country]]},
-    options = list(searching = FALSE, 
-                   ordering = FALSE,
-                   dom = "t"))
+  # autoplot_price
   
-  output$table4 <- renderDataTable({
-    datestamp_income[[input$country]]},
-    options = list(searching = FALSE, 
-                   ordering = FALSE,
-                   dom = "t"))
+  autoplot_price_reactive <- 
+    reactive({
+      if (any(exuber::diagnostics(radf_price, mc_con)$accepted %in% input$country)) {
+        autoplot_var(radf_var = radf_price, 
+                     cv_var = mc_con, 
+                     input = input$country)
+      }else{
+        NULL_plot()
+      }
+    })
+  
+  output$autoplot_price <- 
+    renderPlot({
+      autoplot_price_reactive()
+    })
+  
+  # autoplot_income
+  
+  autoplot_income_reactive <- 
+    reactive({
+      if (any(exuber::diagnostics(radf_income, mc_con)$accepted %in% input$country)) {
+        autoplot_var(radf_var = radf_income, 
+                     cv_var = mc_con, 
+                     input = input$country)
+      }else{
+        NULL_plot()
+      }
+    })
+  
+  output$autoplot_income <- 
+    renderPlot({
+      autoplot_income_reactive()
+    })
+  
+  # table 3
+  
+  table3_reactive <- 
+    reactive({
+      if (any(exuber::diagnostics(radf_price, mc_con)$accepted %in% input$country)) {
+        exuber::datestamp(radf_price, mc_con) %>%
+          purrr::pluck(input$country) %>%
+          to_yq(radf_price, cv_var = mc_con)
+      }else{
+       NULL
+      }
+    })
   
   
-  # Plots -------------------------------------------------------------------
+  output$table3 <- 
+    DT::renderDataTable({
+      table3_reactive()
+    }, options = list(searching = FALSE,
+                      ordering = FALSE,
+                      dom = "t"))
+  # table 4
   
+  table4_reactive <- 
+    reactive({
+      if (any(exuber::diagnostics(radf_income, mc_con)$accepted %in% input$country)) {
+        exuber::datestamp(radf_income, mc_con) %>%
+          purrr::pluck(input$country) %>%
+          to_yq(radf_income, cv_var = mc_con)
+      }else{
+        tibble::tibble()
+      }
+    })
   
+  output$table4 <- 
+    DT::renderDataTable({
+      table4_reactive()
+    }, options = list(searching = FALSE,
+                      ordering = FALSE,
+                      dom = "t"))
   
-  output$plot1 <- renderPlot({plot_price[[input$country]]})
+
   
-  output$plot2 <- renderPlot({autoplot_price[[input$country]]})
-  
-  output$plot3 <- renderPlot({plot_income[[input$country]]})
-  
-  output$plot4 <- renderPlot({autoplot_income[[input$country]]})
-  
-  
+
   # Data --------------------------------------------------------------------
   
   
   ### Data section
-  citation_data <- glue::glue(
+  citation_data <- HTML(glue::glue(
     "We would appreciate that anyone wishing to use this dataset, modified or 
-otherwise, acknowledge the source of the data publicly available through this 
-website with a citation of the working paper: for example, including a statement 
-such as, 'The authors acknowledge use of the dataset described in Mack and Martínez-García (2011).'")
-  citation_estimation <- glue::glue(
+otherwise, acknowledge the source of the data publicly available through this website with 
+a citation of the working paper: for example, including a <br> 
+statement such as, 'The authors acknowledge use of the dataset described in Mack and Martínez-García (2011).'"))
+  citation_estimation <- HTML(glue::glue(
     "We would appreciate that anyone wishing to use this dataset, modified or 
-  otherwise, acknowledge the source of the data publicly available through this 
-  website with a citation of the working paper: for example, including a statement 
-  such as, 'The authors acknowledge use of the dataset described in Pavlidis et al. (2016).'")
+  otherwise, acknowledge the source of the data publicly available through this website with 
+  a citation of the working paper: for example, including a <br> 
+  statement such as, 'The authors acknowledge use of the dataset described in Pavlidis et al. (2016).'"))
   
   # Raw
   
@@ -399,7 +467,7 @@ such as, 'The authors acknowledge use of the dataset described in Mack and Mart�
   
   
   output$data_income <- renderDataTable({
-    make_DT(income, "income", citation_data)
+    make_DT(price_income, "income", citation_data)
   })
   
   

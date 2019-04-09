@@ -1,14 +1,13 @@
 
+library(tidyverse)
+
 # Download file -----------------------------------------------------------
 
-library(readxl)
-library(glue)
+version <- "hp1804"
 
-version <- "hp1803"
+dataURL <- glue::glue("https://www.dallasfed.org/~/media/documents/institute/houseprice/{version}.xlsx")
 
-dataURL <- glue("https://www.dallasfed.org/~/media/documents/institute/houseprice/{version}.xlsx")
-
-temp <- glue("data/{version}.xlsx")
+temp <- glue::glue("data/{version}.xlsx")
 
 download.file(dataURL, destfile = temp, mode = 'wb')
 
@@ -16,11 +15,10 @@ rhpi <- readxl::read_excel(temp, sheet = 3)
 
 rpdi <- readxl::read_excel(temp, sheet = 5)
 
+if(file.exists(temp))
+  file.remove(temp)
 
 # Manipulation ------------------------------------------------------------
-
-library(tidyverse)
-library(lubridate)
 
 
 # Real House Price Index
@@ -56,20 +54,17 @@ full_data <- full_join(
   by = c("Date", "countries")) %>% 
   mutate(price_income = price/income)
 
-
+# Price-to-Income Ratios
 price_income <- full_data %>% 
   select(Date, countries, price_income) %>% 
   spread(countries, -Date) %>% 
   select(-Aggregate, everything())
 
-# pi_frac <- ((price %>% select(-Date)) / (income %>% select(-Date))) %>% 
-#   as_tibble()
-# 
-# price_income <- bind_cols(Date = price$Date, pi_frac)
 
 # Country Names Ordered
 cnames <- price %>%
   select(-Date, -Aggregate) %>%
   names() %>%
-  sort() %>%
+  sort() %>% 
   c("Aggregate") #reposition Aggregate to be last
+
