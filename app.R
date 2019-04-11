@@ -348,7 +348,7 @@ server <- function(input, output, session) {
     plot_var(price, input$country)})
   
   output$plot_income <- renderPlot({
-    plot_var(price, input$country)})
+    plot_var(price_income, input$country)})
   
   output$table1 <-
     renderTable({
@@ -482,7 +482,7 @@ statement such as, 'The authors acknowledge use of the dataset described in Mack
   })
   
   output$estimation_income <- renderDataTable({
-    make_DT(estimation_income, "estimation_price", citation_estimation)
+    make_DT(estimation_income, "estimation_income", citation_estimation)
   })
   
   output$cv_seq <- renderDataTable({
