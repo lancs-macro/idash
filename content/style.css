@@ -13,11 +13,6 @@ p {
   font-size: 16px;
 }
 
-img {
-  display: block;
-  width: 100%;
-  height: auto;
-}
 
 .card-content {
   padding: 1.5em;
@@ -32,12 +27,12 @@ img {
 }
 
 .skin-blue .main-sidebar .sidebar .sidebar-menu .active a {
-  background:rgb(23, 87, 151);
+  background:rgb(45, 59, 66);
   /* background:rgb(255, 208, 37); */
 }
 
 .skin-blue .main-sidebar .sidebar .sidebar-menu .active a:hover {
-  background:rgb(45, 59, 66)
+  background:rgb(45, 59, 66);
   /* background:rgb(255, 208, 37); */
 }
 
@@ -374,7 +369,7 @@ img {
 #rights {
   padding-top: 0.5em;
   text-align: center;
-  background-color: rgb(49, 70, 88);
+  background-color: rgb(189, 201, 213);
   color: rgb(255,255,255);
   margin: 0;
 }

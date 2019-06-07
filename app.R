@@ -5,6 +5,7 @@ library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
 library(ggplot2, quietly = TRUE, warn.conflicts = FALSE)
 library(DT, quietly = TRUE, warn.conflicts = FALSE)
 
+library(shinydashboardPlus, quietly = TRUE, warn.conflicts = FALSE)
 
 # Set Options -------------------------------------------------------------
 
@@ -39,21 +40,16 @@ if (src == "primary") {
 
 # Header ------------------------------------------------------------------
 
+header <- dashboardHeaderPlus(
+  titleWidth = 380,
+  title = tagList(
+    span(class = "logo-lg", 
+         span(img(src = "favicon-32x32.png"),
+               "International Housing Observatory")), 
+    img(src = "favicon-32x32.png")
+    )
 
-header <- dashboardHeader(
-
-  title =  "International Housing Observatory",
-  titleWidth = 350
-
-  # Return to original website
-  # tags$li(
-  #   a(href = "https://www.dallasfed.org/institute/houseprice",
-  #     icon("power-off"),
-  #     title = "Back to Fed's Website"),
-  #   class = "dropdown"
-  # )
 )
-
 # Sidebar -----------------------------------------------------------------
 
 
@@ -66,18 +62,18 @@ sidebar <- dashboardSidebar(
                 menuItem("Overview", tabName = "overview", 
                          icon = icon("globe",  lib = "glyphicon")),
                 menuItem("Analysis", tabName = "analysis", icon = icon("table")),
-                menuItem("Data Sources & Methodology", tabName = "methodology",
+                menuItem("Data & Methodology", tabName = "methodology",
                          icon = icon("chalkboard-teacher")),
-                menuItem("Download Data", icon = icon("download"), 
-                         menuSubItem("Raw Data", tabName = "download_raw",
-                                     icon = icon("angle-right")),
-                         menuSubItem("Exuberance", tabName = "download_exuberance",
-                                     icon = icon("angle-right"))),
+                menuItem("Download Data", tabName = "download", 
+                         icon = icon("download")),
+                         # menuSubItem("Raw Data", tabName = "download_raw",
+                         #             icon = icon("angle-right")),
+                         # menuSubItem("Exuberance", tabName = "download_exuberance",
+                         #             icon = icon("angle-right"))),
                 hr()
     )
   )
 )
-
 
 
 # Body --------------------------------------------------------------------
@@ -92,7 +88,8 @@ body <- dashboardBody(
   
   tags$head(
     
-    # tags$link(rel = "icon", type = "image/jpg", href = "logo.jpg"),
+    tags$title("International Housing Observatory"),
+    tags$link(rel = "shortcut icon", href = "favicon-32x32.png"),
     
     includeHTML("content/google-analytics.html"),
     
@@ -161,6 +158,10 @@ body <- dashboardBody(
                 )
               )
             ),
+            br(),
+            br(),
+            br(),
+            br(),
             includeHTML("content/footer.html")
     ),
     
@@ -275,11 +276,35 @@ body <- dashboardBody(
     
     
     
-    # Data --------------------------------------------------------------------
-    tabItem(tabName = "download_raw",
+
+# Download Datta ----------------------------------------------------------
+
+    
+    tabItem(tabName = "download",
             
             fluidPage(
-              h2("Download Raw Data"),
+              
+              h2("Download", 
+                 style = "padding:1em 0 0 20px;"),
+              h3("Exuberance Statistics", 
+                 style = "padding:0 0 0 20px;"),
+              br(),
+              fluidRow(
+                tabBox(width = 12, 
+                       side = "left",
+                       tabPanel(dataTableOutput("estimation_price"), 
+                                title = "Real House Price Exuberance Statistics"),
+                       tabPanel(dataTableOutput("estimation_income"), 
+                                title = "House-Price-to-Income Exuberance Statistics"),
+                       tabPanel(dataTableOutput("cv_seq"), 
+                                title = "BSADF Critical Value Sequence Statistics"),
+                       tabPanel(dataTableOutput("cv_table"), 
+                                title = "GSADF Statistics & Critical Values")
+                )
+                
+              ),
+              h3("Raw Data", 
+                 style = "padding:0 0 0 20px;"),
               br(),
               fluidRow(
                 tabBox(width = 12,
@@ -294,27 +319,27 @@ body <- dashboardBody(
             includeHTML("content/footer.html")
     ),
     
-    tabItem(tabName = "download_exuberance",
-            
-            fluidPage(
-              h2("Download Exuberance Statistics"),
-              br(),
-              fluidRow(
-                tabBox(width = 12, 
-                       side = "left",
-                       tabPanel(dataTableOutput("estimation_price"), 
-                                title = "Real House Price Exuberance Statistics"),
-                       tabPanel(dataTableOutput("estimation_income"), 
-                                title = "House-Price-to-Income Exuberance Statistics"),
-                       tabPanel(dataTableOutput("cv_seq"), 
-                                title = "BSADF Critical Value Sequence Statistics"),
-                       tabPanel(dataTableOutput("cv_table"), 
-                                title = "GSADF Statistics & Critical Values")
-                )
-              )
-            ),
-            includeHTML("content/footer.html")
-    ),
+    # tabItem(tabName = "download_exuberance",
+    #         
+    #         fluidPage(
+    #           h2("Download Exuberance Statistics"),
+    #           br(),
+    #           fluidRow(
+    #             tabBox(width = 12, 
+    #                    side = "left",
+    #                    tabPanel(dataTableOutput("estimation_price"), 
+    #                             title = "Real House Price Exuberance Statistics"),
+    #                    tabPanel(dataTableOutput("estimation_income"), 
+    #                             title = "House-Price-to-Income Exuberance Statistics"),
+    #                    tabPanel(dataTableOutput("cv_seq"), 
+    #                             title = "BSADF Critical Value Sequence Statistics"),
+    #                    tabPanel(dataTableOutput("cv_table"), 
+    #                             title = "GSADF Statistics & Critical Values")
+    #             )
+    #           )
+    #         ),
+    #         includeHTML("content/footer.html")
+    # ),
     
     tabItem(tabName = "methodology",
             includeHTML("content/methodology.html"),
@@ -473,9 +498,7 @@ statement such as, 'The authors acknowledge use of the dataset described in Mack
   
   ### Estimation Statistics and Critical Values
   
-  output$cv_table <- renderDataTable({
-    make_DT_general(cv_table, "cv_table")
-  })
+  
   
   output$estimation_price <- renderDataTable({
     make_DT(estimation_price, "estimation_price", citation_estimation)
@@ -489,11 +512,14 @@ statement such as, 'The authors acknowledge use of the dataset described in Mack
     make_DT_general(cv_seq, "cv_sequence")
   })
   
-  
+  output$cv_table <- renderDataTable({
+    make_DT_general(cv_table, "cv_table")
+  })
   
 }
 
 
 # Launch ------------------------------------------------------------------
 
-shinyApp(ui = dashboardPage(header, sidebar, body), server)
+shinyApp(ui = dashboardPagePlus(title = "International Housing Observatory",
+                                header, sidebar, body), server)

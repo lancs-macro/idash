@@ -100,13 +100,13 @@ make_DT <- function(x, filename, caption_string = ""){
                 options = list( dom = 'Bfrtip',#'Blfrtip',
                                 searching = FALSE,
                                 autoWidth = TRUE,
-                                paging = FALSE,
-                                pageLength = 20,#NROW(x),
+                                paging = TRUE,
+                                pageLength = 6,#NROW(x),
                                 # scrollY = T,
                                 scrollX = T,
                                 columnDefs = list(
                                   list(
-                                    targets = c(0), width = "80px")),
+                                    targets = c(0, 14, 18, 21), width = "80px")),
                                 buttons = list(
                                   list(
                                     extend = "collection",
@@ -130,8 +130,9 @@ make_DT_general <- function(x, filename) {
                 options = list(dom = 'Bfrtip',#'Blfrtip',
                                searching = FALSE,
                                autoWidth = TRUE,
-                               paging = FALSE,
-                               pageLength = NROW(x),
+                               paging = TRUE,
+                               pageLength = 6,
+                               # pageLength = NROW(x),
                                scrollX = F,
                                # columnDefs = list(list(targets = c(0), width = "80px")),
                                buttons = list(

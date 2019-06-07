@@ -1,10 +1,11 @@
-Imports:
-  shiny,
-  shinytest,
-  shinydashboard,
-  DT,
-  tidyverse,
-  glue,
-  shinytest
+Imports: 
+    shiny,
+    shinytest,
+    shinydashboard,
+    DT,
+    tidyverse,
+    glue,
+    shinytest
 Remotes:
-  nik01010/dashboardthemes
+    nik01010/dashboardthemes
+    
