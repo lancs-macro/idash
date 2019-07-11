@@ -1,6 +1,6 @@
 
-source("R/01-manipulation.R")
-source("R/00-functions-src.R")
+source(here::here("R", "01-manipulation.R"))
+source(here::here("R", "00-functions-src.R")
 
 library(exuber)
 
@@ -41,7 +41,7 @@ rejected_income <-
 
 datestamp_price <-
   radf_price %>% 
-  datestamp(cv = mc_con) 
+  datestamp(cv = mc_con)
 
 datestamp_income <- 
   radf_income %>% 
@@ -73,12 +73,14 @@ autoplot_income[rejected_income] <- NULL_plot(length(rejected_income))
 autoplot_datestamp_price <-
   datestamp_price %>%  
   autoplot() +
-  scale_custom(fortify(radf_price))
+  scale_custom(fortify(radf_price)) +
+  scale_color_viridis_d()
 
 autoplot_datestamp_income <- 
   datestamp_income %>% 
   autoplot() + 
-  scale_custom(fortify(radf_price))
+  scale_custom(fortify(radf_price))  +
+  scale_color_viridis_d()
 
 # Overwrite datestamp --------------------------------------------------------
 

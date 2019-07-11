@@ -3,7 +3,12 @@ library(tidyverse)
 
 # Download file -----------------------------------------------------------
 
-version <- "hp1804"
+version <- xml2::read_html("https://www.dallasfed.org/institute/houseprice#tab2") %>%
+  rvest::html_nodes("a") %>%
+  rvest::html_attr("href") %>%
+  str_subset(".xlsx") %>% 
+  `[`(1) %>% 
+  str_extract("(?<=houseprice/).+(?=.xlsx)")
 
 dataURL <- glue::glue("https://www.dallasfed.org/~/media/documents/institute/houseprice/{version}.xlsx")
 

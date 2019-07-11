@@ -5,8 +5,8 @@ account: kvasilopoulos
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 893002
-bundleId: 2049150
+bundleId: 2221817
 url: https://kvasilopoulos.shinyapps.io/international-housing-observatory/
-when: 1556615668.1042
+when: 1562851122.50797
 asMultiple: FALSE
 asStatic: FALSE

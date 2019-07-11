@@ -1,24 +1,30 @@
-library(shiny, quietly = TRUE, warn.conflicts = FALSE)
-library(shinydashboard, quietly = TRUE, warn.conflicts = FALSE)
-# library(dashboardthemes)
-library(dplyr, quietly = TRUE, warn.conflicts = FALSE)
-library(ggplot2, quietly = TRUE, warn.conflicts = FALSE)
-library(DT, quietly = TRUE, warn.conflicts = FALSE)
 
-library(shinydashboardPlus, quietly = TRUE, warn.conflicts = FALSE)
+# pkgs <- c("shiny", "shinydashboard", "shinydashboardPlus", "dplyr", 
+#           "DT", "rlang")
+# 
+# lapply(pkgs, library, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)
+
+library(shiny)
+library(shinydashboard)
+library(shinydashboardPlus)
+library(dplyr)
+library(ggplot2)
+library(DT)
+library(rlang)
 
 # Set Options -------------------------------------------------------------
 
 src <- "primary" 
-load <- TRUE
+load_rds <- TRUE
 
 # Load everything ---------------------------------------------------------
 
-if (load) {
-  path_store <- list.files("data/RDS", full.names = TRUE)
-  store <-  stringr::str_remove(list.files("data/RDS"), ".rds")
-
-  for (i in seq_along(path_store)) assign(store[i], readRDS(file = path_store[i]))
+if (load_rds) {
+  path_store_rds <- list.files("data/RDS", full.names = TRUE)
+  store_rds <-  stringr::str_remove(list.files("data/RDS"), ".rds")
+  for (i in seq_along(path_store_rds)) {
+    assign(store_rds[i], readRDS(file = path_store_rds[i]))
+  }
 }
 
 
@@ -44,11 +50,24 @@ header <- dashboardHeaderPlus(
   titleWidth = 380,
   title = tagList(
     span(class = "logo-lg", 
-         span(img(src = "favicon-32x32.png"),
+         span(img(src = "logo.png",  height = "32", width = "32"),
                "International Housing Observatory")), 
-    img(src = "favicon-32x32.png")
-    )
+    img(src = "logo.png",  height = "32", width = "32")
+    # img(src = "favicon-32x32.png")
+    ),
 
+  tags$li(
+    a(href = 'https://github.com/lancs-macro/international-housing-observatory',
+      target = "_`blank",
+      HTML('<i title="Browse our github repositoty" class="fab fa-github"></i>'),
+      style = "font-size:28px; padding-top:10px; padding-bottom:10px;"),
+    class = "dropdown")#,
+  # tags$li(
+  #   a(href = 'https://github.com/lancs-macro/international-housing-observatory',
+  #     target = "_`blank",
+  #     img(src = "ukho-logo.png", height = "32", width = "32"),
+  #     style = "font-size:28px; padding-top:10px; padding-bottom:10px;"),
+  #   class = "dropdown")
 )
 # Sidebar -----------------------------------------------------------------
 
@@ -66,10 +85,6 @@ sidebar <- dashboardSidebar(
                          icon = icon("chalkboard-teacher")),
                 menuItem("Download Data", tabName = "download", 
                          icon = icon("download")),
-                         # menuSubItem("Raw Data", tabName = "download_raw",
-                         #             icon = icon("angle-right")),
-                         # menuSubItem("Exuberance", tabName = "download_exuberance",
-                         #             icon = icon("angle-right"))),
                 hr()
     )
   )
@@ -319,28 +334,6 @@ body <- dashboardBody(
             includeHTML("content/footer.html")
     ),
     
-    # tabItem(tabName = "download_exuberance",
-    #         
-    #         fluidPage(
-    #           h2("Download Exuberance Statistics"),
-    #           br(),
-    #           fluidRow(
-    #             tabBox(width = 12, 
-    #                    side = "left",
-    #                    tabPanel(dataTableOutput("estimation_price"), 
-    #                             title = "Real House Price Exuberance Statistics"),
-    #                    tabPanel(dataTableOutput("estimation_income"), 
-    #                             title = "House-Price-to-Income Exuberance Statistics"),
-    #                    tabPanel(dataTableOutput("cv_seq"), 
-    #                             title = "BSADF Critical Value Sequence Statistics"),
-    #                    tabPanel(dataTableOutput("cv_table"), 
-    #                             title = "GSADF Statistics & Critical Values")
-    #             )
-    #           )
-    #         ),
-    #         includeHTML("content/footer.html")
-    # ),
-    
     tabItem(tabName = "methodology",
             includeHTML("content/methodology.html"),
             includeHTML("content/footer.html")
@@ -357,12 +350,16 @@ server <- function(input, output, session) {
   output$autoplot_datestamp_price <- 
     renderPlot({
       exuber::datestamp(radf_price, cv = mc_con) %>% 
-        exuber::autoplot()
+        exuber::autoplot() +
+        scale_color_viridis_d() +
+        scale_custom(fortify(radf_price))
     })
   output$autoplot_datestamp_income <- 
     renderPlot({
       exuber::datestamp(radf_income, cv = mc_con) %>% 
-        exuber::autoplot()
+        exuber::autoplot() +
+        scale_color_viridis_d() +
+        scale_custom(fortify(radf_price))
     })
   
   
@@ -486,12 +483,12 @@ statement such as, 'The authors acknowledge use of the dataset described in Mack
   
   # Raw
   
-  output$data_price <- DT::renderDataTable({
+  output$data_price <- DT::renderDataTable(server = FALSE, {
     make_DT(price, "price", citation_data)
   })
   
   
-  output$data_income <- renderDataTable({
+  output$data_income <- DT::renderDataTable(server = FALSE, {
     make_DT(price_income, "income", citation_data)
   })
   
@@ -500,20 +497,20 @@ statement such as, 'The authors acknowledge use of the dataset described in Mack
   
   
   
-  output$estimation_price <- renderDataTable({
-    make_DT(estimation_price, "estimation_price", citation_estimation)
+  output$estimation_price <- DT::renderDataTable(server = FALSE, {
+    make_DT(estimation_price, "estimation-price", citation_estimation)
   })
   
-  output$estimation_income <- renderDataTable({
-    make_DT(estimation_income, "estimation_income", citation_estimation)
+  output$estimation_income <- DT::renderDataTable(server = FALSE, {
+    make_DT(estimation_income, "estimation-income", citation_estimation)
   })
   
-  output$cv_seq <- renderDataTable({
-    make_DT_general(cv_seq, "cv_sequence")
+  output$cv_seq <- DT::renderDataTable(server = FALSE, {
+    make_DT_general(cv_seq, "cv-sequence")
   })
   
-  output$cv_table <- renderDataTable({
-    make_DT_general(cv_table, "cv_table")
+  output$cv_table <- DT::renderDataTable(server = FALSE, {
+    make_DT_general(cv_table, "cv-table")
   })
   
 }
