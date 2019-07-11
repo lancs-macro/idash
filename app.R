@@ -75,21 +75,21 @@ header <- dashboardHeaderPlus(
 sidebar <- dashboardSidebar(
   collapsed = TRUE,
   sidebarMenu(
-    sidebarMenu(id = "tabs",
-                menuItem("Home", tabName = "home", icon = icon("home"),
-                         selected = TRUE),
-                menuItem("Overview", tabName = "overview", 
-                         icon = icon("globe",  lib = "glyphicon")),
-                menuItem("Analysis", tabName = "analysis", icon = icon("table")),
-                menuItem("Data & Methodology", tabName = "methodology",
-                         icon = icon("chalkboard-teacher")),
-                menuItem("Download Data", tabName = "download", 
-                         icon = icon("download")),
-                hr()
+    sidebarMenu(
+      id = "tabs",
+      menuItem("Home", tabName = "home", icon = icon("home"),
+               selected = TRUE),
+      menuItem("Overview", tabName = "overview", 
+               icon = icon("globe",  lib = "glyphicon")),
+      menuItem("Analysis", tabName = "analysis", icon = icon("table")),
+      menuItem("Data & Methodology", tabName = "methodology",
+               icon = icon("chalkboard-teacher")),
+      menuItem("Download Data", tabName = "download", 
+               icon = icon("download")),
+      hr()
     )
   )
 )
-
 
 # Body --------------------------------------------------------------------
 
@@ -104,12 +104,11 @@ body <- dashboardBody(
   tags$head(
     
     tags$title("International Housing Observatory"),
-    tags$link(rel = "shortcut icon", href = "favicon-32x32.png"),
-    
-    includeHTML("content/google-analytics.html"),
-    
+    tags$link(rel = "shortcut icon", href = "logo.png"),
     tags$link(rel = "stylesheet", type = "text/css", 
-              href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css")
+              href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"),
+    includeHTML("content/google-analytics.html")
+    
   ),
   
   # Customize the red to red_lanc
@@ -132,239 +131,241 @@ body <- dashboardBody(
   ),
   
   
-  
-  # Overview ----------------------------------------------------------------
-  
-  
   tabItems(
-    tabItem(tabName = "home",
-            includeCSS("content/style.css"),
-            includeHTML("content/home.html"),
-            includeHTML("content/footer.html")
+
+# Home Tab ----------------------------------------------------------------    
+    
+    tabItem(
+      tabName = "home",
+      includeCSS("content/style.css"),
+      includeHTML("content/home.html"),
+      includeHTML("content/footer.html")
             
     ),
-    
-    tabItem(tabName = "overview",
-            fluidPage(
-                      
-              h2("Overview",
-                 style = "padding:1em 0 0 20px;"),
-                      
-              h3("Chronology of exuberance in international housing markets.", 
-                 style = "padding:0 0 0 20px;"),
-                      
-              p("The below figures show the periods during which real house prices 
-                and house-price-to-income ratios displayed explosive dynamics (i.e., 
-                the periods during which the estimated BSADF statistics exceeded the 
-                corresponding 95% critical values). Most prominently, they show the
-                synchronization of exuberance across markets in the 2000s. ", 
-                style = "padding:1em 0 2em 1.5em;"),
-              
-              fluidRow(
-                box2(
-                  title = "Real House Prices",
-                  subtitle = "Peak-to-Trough Contraction Periods",
-                  plotOutput("autoplot_datestamp_price")
-                ),
-                box2(
-                  title = "House-Price-to-Income Ratio",
-                  subtitle = "Peak-to-Trough Contraction Periods",
-                  plotOutput("autoplot_datestamp_income")
-                )
-              )
-            ),
-            br(),
-            br(),
-            br(),
-            br(),
-            includeHTML("content/footer.html")
+
+# Overview Tab ------------------------------------------------------------
+        
+    tabItem(
+      tabName = "overview",
+      fluidPage(
+        
+        h2("Overview",
+           style = "padding:1em 0 0 20px;"),
+        
+        h3("Chronology of exuberance in international housing markets.", 
+           style = "padding:0 0 0 20px;"),
+        
+        p("The below figures show the periods during which real house prices 
+          and house-price-to-income ratios displayed explosive dynamics 
+          (i.e., the periods during which the estimated BSADF statistics 
+          exceeded the corresponding 95% critical values). Most prominently, 
+          they show thesynchronization of exuberance across markets in the 
+          2000s. ", 
+          style = "padding:1em 0 2em 1.5em;"),
+        
+        fluidRow(
+          box2(
+            title = "Real House Prices",
+            subtitle = "Peak-to-Trough Contraction Periods",
+            plotOutput("autoplot_datestamp_price")
+          ),
+          box2(
+            title = "House-Price-to-Income Ratio",
+            subtitle = "Peak-to-Trough Contraction Periods",
+            plotOutput("autoplot_datestamp_income")
+          )
+        )
+      ),
+      br(),
+      br(),
+      br(),
+      br(),
+      includeHTML("content/footer.html")
     ),
     
-    # Analysis --------------------------------------------------------------------
-   
-    
-    tabItem(tabName = "analysis",
-            fluidPage(style = "padding:0;",
-              
-                h2("Analysis",
-                   style = "padding: 1em 0 0 1em;"),
-              
-              div(class = "row", 
-                  style = "text-align:left;padding:2em;",
-                  
-                  column(6, 
-                         p(
-                           "This page provides figures for real house prices and
-                             house-price-to-disposable-income ratios (housing affordability) 
-                            starting in 1975, exuberance statistics, as well as date-stamping of the 
-                            specific periods of exuberance.")
-                  ),
-                  column(6,
-                         style = "padding-left:5em;",
-                         selectInput("country", "Select Country:", cnames)
-                  )
-              ),
-              
-              
-              fluidRow(
-                box(
-                  title = "Real House Prices",
-                  plotOutput("plot_price"),
-                  width = 6
-                ),
-                box(
-                  title = "House-Price-to-Income Ratio", 
-                  plotOutput("plot_income"),
-                  width = 6
-                )
-              ),
-              
-              fluidRow(
-                box(
-                  width = 12,
-                  background = "blue",
-                  p("Exuberance Statistics", style = "font-size:22px;text-align:center;")
-                )
-              ),
-              
-              fluidRow(
-                box(
-                  title = "Real House Prices",
-                  tableOutput("table1")
-                ),
-                box(
-                  title = "House-Price-to-Income Ratio", 
-                  tableOutput("table2")
-                )
-              ),
-              
-              
-              fluidRow(
-                box(
-                  width = 12,
-                  background = "blue",
-                  p("Date-Stamping Periods of Exuberance", 
-                    style = "font-size:22px;text-align:center;")
-                )
-              ),
-              
-              fluidRow(
-                box(
-                  title = "Real House Prices",
-                  plotOutput("autoplot_price"),
-                  width = 6),
-                box(
-                  title = "House-Price-to-Income Ratio", 
-                  plotOutput("autoplot_income"),
-                  width = 6),
-                p(
-                  em(
-                    span("There is exuberance when the"), 
-                    span("statistic", style = "color:blue"), 
-                    span("exceeds the"),
-                    span("critical value.",  style = "color:red;")
-                ), 
-                style = "text-align:center;font-size:14px;")
-              ),
-              
-              fluidRow(
-                box(
-                  width = 12,
-                  background = "blue",
-                  p("Date-Stamping Periods of Exuberance Table", 
-                    style = "font-size:22px;text-align:center;")
-                )
-              ),
-              fluidRow(
-                box(
-                  title = "Real House Prices",
-                  dataTableOutput("table3")
-                ),
-                box(
-                  title = "House-Price-to-Income Ratio", 
-                  dataTableOutput("table4")
-                )
-              )
-            ),
-            includeHTML("content/footer.html")
-    ),
-    
-    
-    
 
-# Download Datta ----------------------------------------------------------
-
+# Analysis Tab ------------------------------------------------------------
     
-    tabItem(tabName = "download",
+    tabItem(
+      tabName = "analysis",
+      fluidPage(
+        style = "padding:0;",
+        
+        h2("Analysis",
+           style = "padding: 1em 0 0 1em;"),
+        
+        div(class = "row", 
+            style = "text-align:left;padding:2em;",
             
-            fluidPage(
-              
-              h2("Download", 
-                 style = "padding:1em 0 0 20px;"),
-              h3("Exuberance Statistics", 
-                 style = "padding:0 0 0 20px;"),
-              br(),
-              fluidRow(
-                tabBox(width = 12, 
-                       side = "left",
-                       tabPanel(dataTableOutput("estimation_price"), 
-                                title = "Real House Price Exuberance Statistics"),
-                       tabPanel(dataTableOutput("estimation_income"), 
-                                title = "House-Price-to-Income Exuberance Statistics"),
-                       tabPanel(dataTableOutput("cv_seq"), 
-                                title = "BSADF Critical Value Sequence Statistics"),
-                       tabPanel(dataTableOutput("cv_table"), 
-                                title = "GSADF Statistics & Critical Values")
-                )
-                
-              ),
-              h3("Raw Data", 
-                 style = "padding:0 0 0 20px;"),
-              br(),
-              fluidRow(
-                tabBox(width = 12,
-                       side = "left",
-                       tabPanel(dataTableOutput("data_price"), 
-                                title = "Real House Prices"),
-                       tabPanel(dataTableOutput("data_income"), 
-                                title = "House-Price-to-Income Ratio")
-                )
-              )
+            column(width = 6, 
+                   p(
+                     "This page provides figures for real house prices and
+                     house-price-to-disposable-income ratios (housing affordability) 
+                     starting in 1975, exuberance statistics, as well as date-stamping 
+                     of the specific periods of exuberance.")
             ),
-            includeHTML("content/footer.html")
+            column(width = 6,
+                   style = "padding-left:5em;",
+                   selectInput("country", "Select Country:", cnames)
+            )
+        ),
+        
+        fluidRow(
+          box(
+            title = "Real House Prices",
+            plotOutput("plot_price"),
+            width = 6
+          ),
+          box(
+            title = "House-Price-to-Income Ratio", 
+            plotOutput("plot_income"),
+            width = 6
+          )
+        ),
+        
+        fluidRow(
+          box(
+            width = 12,
+            background = "blue",
+            p("Exuberance Statistics", 
+              style = "font-size:22px;text-align:center;")
+          )
+        ),
+        
+        fluidRow(
+          box(
+            title = "Real House Prices",
+            tableOutput("table1")
+          ),
+          box(
+            title = "House-Price-to-Income Ratio", 
+            tableOutput("table2")
+          )
+        ),
+        
+        fluidRow(
+          box(
+            width = 12,
+            background = "blue",
+            p("Date-Stamping Periods of Exuberance", 
+              style = "font-size:22px;text-align:center;")
+          )
+        ),
+        
+        fluidRow(
+          box(
+            title = "Real House Prices",
+            plotOutput("autoplot_price"),
+            width = 6),
+          box(
+            title = "House-Price-to-Income Ratio", 
+            plotOutput("autoplot_income"),
+            width = 6),
+          p(
+            em(
+              span("There is exuberance when the"), 
+              span("statistic", style = "color:blue"), 
+              span("exceeds the"),
+              span("critical value.",  style = "color:red;")
+            ), 
+            style = "text-align:center;font-size:14px;")
+        ),
+        
+        fluidRow(
+          box(
+            width = 12,
+            background = "blue",
+            p("Date-Stamping Periods of Exuberance Table", 
+              style = "font-size:22px;text-align:center;")
+          )
+        ),
+        fluidRow(
+          box(
+            title = "Real House Prices",
+            dataTableOutput("table3")
+          ),
+          box(
+            title = "House-Price-to-Income Ratio", 
+            dataTableOutput("table4")
+          )
+        )
+      ),
+      includeHTML("content/footer.html")
     ),
     
-    tabItem(tabName = "methodology",
-            includeHTML("content/methodology.html"),
-            includeHTML("content/footer.html")
+
+# Download Data Tab -------------------------------------------------------
+
+    tabItem(
+      tabName = "download",
+      
+      fluidPage(
+        
+        h2("Download", 
+           style = "padding:1em 0 0 20px;"),
+        h3("Exuberance Statistics", 
+           style = "padding:0 0 0 20px;"),
+        br(),
+        fluidRow(
+          tabBox(width = 12, 
+                 side = "left",
+                 tabPanel(dataTableOutput("estimation_price"), 
+                          title = "Real House Price Exuberance Statistics"),
+                 tabPanel(dataTableOutput("estimation_income"), 
+                          title = "House-Price-to-Income Exuberance Statistics"),
+                 tabPanel(dataTableOutput("cv_seq"), 
+                          title = "BSADF Critical Value Sequence Statistics"),
+                 tabPanel(dataTableOutput("cv_table"), 
+                          title = "GSADF Statistics & Critical Values")
+          )
+          
+        ),
+        h3("Raw Data", 
+           style = "padding:0 0 0 20px;"),
+        br(),
+        fluidRow(
+          tabBox(width = 12,
+                 side = "left",
+                 tabPanel(dataTableOutput("data_price"), 
+                          title = "Real House Prices"),
+                 tabPanel(dataTableOutput("data_income"), 
+                          title = "House-Price-to-Income Ratio")
+          )
+        )
+      ),
+      includeHTML("content/footer.html")
+    ),
+    
+# Methodology Tab ---------------------------------------------------------
+
+    tabItem(
+      tabName = "methodology",
+      includeHTML("content/methodology.html"),
+      includeHTML("content/footer.html")
     )
   )
 )
 
-
 server <- function(input, output, session) {
   
- 
   # overview ----------------------------------------------------------------
   
   output$autoplot_datestamp_price <- 
     renderPlot({
       exuber::datestamp(radf_price, cv = mc_con) %>% 
         exuber::autoplot() +
-        scale_color_viridis_d() +
-        scale_custom(fortify(radf_price))
+        scale_color_viridis_d() #+
+        # scale_custom(fortify(radf_price))
     })
   output$autoplot_datestamp_income <- 
     renderPlot({
       exuber::datestamp(radf_income, cv = mc_con) %>% 
         exuber::autoplot() +
-        scale_color_viridis_d() +
-        scale_custom(fortify(radf_price))
+        scale_color_viridis_d() #+
+        # scale_custom(fortify(radf_price))
     })
   
-  
   # Analysis ----------------------------------------------------------------
-  
   
   output$plot_price <- renderPlot({
     plot_var(price, input$country)})
@@ -436,7 +437,6 @@ server <- function(input, output, session) {
       }
     })
   
-  
   output$table3 <- 
     DT::renderDataTable({
       table3_reactive()
@@ -463,11 +463,7 @@ server <- function(input, output, session) {
                       ordering = FALSE,
                       dom = "t"))
   
-
-  
-
   # Data --------------------------------------------------------------------
-  
   
   ### Data section
   citation_data <- HTML(glue::glue(
@@ -487,15 +483,11 @@ statement such as, 'The authors acknowledge use of the dataset described in Mack
     make_DT(price, "price", citation_data)
   })
   
-  
   output$data_income <- DT::renderDataTable(server = FALSE, {
     make_DT(price_income, "income", citation_data)
   })
   
-  
   ### Estimation Statistics and Critical Values
-  
-  
   
   output$estimation_price <- DT::renderDataTable(server = FALSE, {
     make_DT(estimation_price, "estimation-price", citation_estimation)
@@ -514,7 +506,6 @@ statement such as, 'The authors acknowledge use of the dataset described in Mack
   })
   
 }
-
 
 # Launch ------------------------------------------------------------------
 

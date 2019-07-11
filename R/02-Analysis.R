@@ -1,6 +1,7 @@
+library(here)
 
-source(here::here("R", "01-manipulation.R"))
-source(here::here("R", "00-functions-src.R")
+source(here("R", "01-manipulation.R"))
+source(here("R", "00-functions-src.R"))
 
 library(exuber)
 
@@ -73,14 +74,12 @@ autoplot_income[rejected_income] <- NULL_plot(length(rejected_income))
 autoplot_datestamp_price <-
   datestamp_price %>%  
   autoplot() +
-  scale_custom(fortify(radf_price)) +
-  scale_color_viridis_d()
+  scale_custom(fortify(radf_price))
 
 autoplot_datestamp_income <- 
   datestamp_income %>% 
   autoplot() + 
-  scale_custom(fortify(radf_price))  +
-  scale_color_viridis_d()
+  scale_custom(fortify(radf_price)) 
 
 # Overwrite datestamp --------------------------------------------------------
 
@@ -181,6 +180,7 @@ cv_table <-
   )
 
 # save data ---------------------------------------------------------------
+
 items <- c("price", "income")
 store <- c("price", "price_income",
            c("cnames"), 
@@ -191,7 +191,5 @@ store <- c("price", "price_income",
 path_store <- glue::glue("data/RDS/{store}.rds")
 
 for (i in seq_along(store)) saveRDS(get(store[i]), file = path_store[i])
-
-
 
 
