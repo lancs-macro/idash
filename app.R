@@ -11,15 +11,16 @@ library(dplyr)
 library(ggplot2)
 library(DT)
 library(rlang)
+library(purrr)
 
 # Set Options -------------------------------------------------------------
 
-src <- "primary" 
-load_rds <- TRUE
+opt_src <- "main" 
+opt_load_rds <- TRUE
 
 # Load everything ---------------------------------------------------------
 
-if (load_rds) {
+if (opt_load_rds) {
   path_store_rds <- list.files("data/RDS", full.names = TRUE)
   store_rds <-  stringr::str_remove(list.files("data/RDS"), ".rds")
   for (i in seq_along(path_store_rds)) {
@@ -30,9 +31,9 @@ if (load_rds) {
 
 # Source ------------------------------------------------------------------
 
-if (src == "primary") {
+if (opt_src == "main") {
   # suppressMessages(
-    list.files(c("R"), full.names = TRUE, pattern = "-src.R") %>% 
+    list.files("R", full.names = TRUE, pattern = "-src.R") %>% 
       purrr::map(source)
   # )
 }else {
@@ -42,7 +43,10 @@ if (src == "primary") {
   # )
 }
 
+# Version -----------------------------------------------------------------
 
+vers <- price[nrow(price), 1][[1]] %>% 
+  zoo::as.yearqtr()
 
 # Header ------------------------------------------------------------------
 
@@ -77,8 +81,7 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     sidebarMenu(
       id = "tabs",
-      menuItem("Home", tabName = "home", icon = icon("home"),
-               selected = TRUE),
+      menuItem("Home", tabName = "home", icon = icon("home"), selected = TRUE),
       menuItem("Overview", tabName = "overview", 
                icon = icon("globe",  lib = "glyphicon")),
       menuItem("Analysis", tabName = "analysis", icon = icon("table")),
@@ -133,7 +136,7 @@ body <- dashboardBody(
   
   tabItems(
 
-# Home Tab ----------------------------------------------------------------    
+  # Home Tab ----------------------------------------------------------------    
     
     tabItem(
       tabName = "home",
@@ -204,10 +207,14 @@ body <- dashboardBody(
                      starting in 1975, exuberance statistics, as well as date-stamping 
                      of the specific periods of exuberance.")
             ),
-            column(width = 6,
+            column(width = 4,
                    style = "padding-left:5em;",
                    selectInput("country", "Select Country:", cnames)
-            )
+            ),
+            column(width = 2,
+                   style = "padding-top:1.5em;",
+                   downloadButton("report", "Generate report")
+                   )
         ),
         
         fluidRow(
@@ -352,20 +359,48 @@ server <- function(input, output, session) {
   
   output$autoplot_datestamp_price <- 
     renderPlot({
-      exuber::datestamp(radf_price, cv = mc_con) %>% 
-        exuber::autoplot() +
-        scale_color_viridis_d() #+
-        # scale_custom(fortify(radf_price))
+      autoplot_datestamp_price
+      # exuber::datestamp(radf_price, cv = mc_con) %>% 
+      #   exuber::autoplot() +
+      #   scale_color_viridis_d() +
+      #    scale_custom(fortify(radf_price))
     })
   output$autoplot_datestamp_income <- 
     renderPlot({
-      exuber::datestamp(radf_income, cv = mc_con) %>% 
-        exuber::autoplot() +
-        scale_color_viridis_d() #+
+      autoplot_datestamp_income
         # scale_custom(fortify(radf_price))
     })
   
   # Analysis ----------------------------------------------------------------
+  
+  output$report <- downloadHandler(
+    
+    filename = function() {
+      paste0("Analysis-", input$country, "-", gsub(" ", "", vers), ".pdf")
+    },
+    # filename = "mpla.pdf",
+    
+    content = function(file) {
+      
+      tempReport <- file.path(tempdir(), "report.Rmd")
+      file.copy("R/report.Rmd", tempReport, overwrite = TRUE)
+      
+      # Set up parameters to pass to Rmd document
+      params <- list(country = input$country, 
+                     version = paste0(" ", gsub(" ", ":", vers)),
+                     data_price = price,
+                     data_price_income = price_income,
+                     rprice = radf_price,
+                     rincome = radf_income,
+                     cv = mc_con
+                     )
+      
+      rmarkdown::render(tempReport, output_file = file, params = params,
+                        envir = new.env(parent = globalenv())
+      )
+    }
+  )
+  
   
   output$plot_price <- renderPlot({
     plot_var(price, input$country)})

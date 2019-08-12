@@ -42,7 +42,7 @@ rejected_income <-
 
 datestamp_price <-
   radf_price %>% 
-  datestamp(cv = mc_con)
+  datestamp(cv = mc_con) 
 
 datestamp_income <- 
   radf_income %>% 
@@ -52,7 +52,7 @@ datestamp_income <-
 
 autoplot_price <- 
   radf_price %>% 
-  autoplot(cv = mc_con, include = TRUE) %>% 
+  autoplot(cv = mc_con, include = TRUE, arrange = FALSE) %>% 
   map( ~.x + ggtitle("") +
          scale_custom(object = fortify(radf_price))
   )
@@ -62,7 +62,7 @@ autoplot_price[rejected_price] <- NULL_plot(length(rejected_price))
 
 autoplot_income <- 
   radf_income %>% 
-  autoplot(cv = mc_con, include = TRUE) %>% 
+  autoplot(cv = mc_con, include = TRUE, arrange = FALSE) %>% 
   map( ~.x + ggtitle("") +
          scale_custom(object = fortify(radf_price))
   )
@@ -74,12 +74,14 @@ autoplot_income[rejected_income] <- NULL_plot(length(rejected_income))
 autoplot_datestamp_price <-
   datestamp_price %>%  
   autoplot() +
-  scale_custom(fortify(radf_price))
+  scale_custom(fortify(radf_price)) + 
+  scale_color_viridis_d()
 
 autoplot_datestamp_income <- 
   datestamp_income %>% 
   autoplot() + 
-  scale_custom(fortify(radf_price)) 
+  scale_custom(fortify(radf_price)) + 
+  scale_color_viridis_d()
 
 # Overwrite datestamp --------------------------------------------------------
 
@@ -144,8 +146,6 @@ plot_income <-
          scale_custom(object = fortify(radf_price))
   )
 
-
-
 # data export -------------------------------------------------------------
 
 estimation_price <- 
@@ -186,10 +186,13 @@ store <- c("price", "price_income",
            c("cnames"), 
            "mc_con", "cv_seq", "cv_table",
            glue::glue("estimation_{items}"),
+           glue::glue("autoplot_datestamp_{items}"),
            glue::glue("radf_{items}"))
 
 path_store <- glue::glue("data/RDS/{store}.rds")
 
-for (i in seq_along(store)) saveRDS(get(store[i]), file = path_store[i])
+for (i in seq_along(store)) {
+  saveRDS(get(store[i]), file = path_store[i])
+}
 
 

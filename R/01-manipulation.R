@@ -3,16 +3,16 @@ library(tidyverse)
 
 # Download file -----------------------------------------------------------
 
-version <- xml2::read_html("https://www.dallasfed.org/institute/houseprice#tab2") %>%
+vers <- xml2::read_html("https://www.dallasfed.org/institute/houseprice#tab2") %>%
   rvest::html_nodes("a") %>%
   rvest::html_attr("href") %>%
   str_subset(".xlsx") %>% 
   `[`(1) %>% 
   str_extract("(?<=houseprice/).+(?=.xlsx)")
 
-dataURL <- glue::glue("https://www.dallasfed.org/~/media/documents/institute/houseprice/{version}.xlsx")
+dataURL <- glue::glue("https://www.dallasfed.org/~/media/documents/institute/houseprice/{vers}.xlsx")
 
-temp <- glue::glue("data/{version}.xlsx")
+temp <- glue::glue("data/{vers}.xlsx")
 
 download.file(dataURL, destfile = temp, mode = 'wb')
 
@@ -20,8 +20,10 @@ rhpi <- readxl::read_excel(temp, sheet = 3)
 
 rpdi <- readxl::read_excel(temp, sheet = 5)
 
-if(file.exists(temp))
+if (file.exists(temp)) {
   file.remove(temp)
+}
+  
 
 # Manipulation ------------------------------------------------------------
 
@@ -72,4 +74,3 @@ cnames <- price %>%
   names() %>%
   sort() %>% 
   c("Aggregate") #reposition Aggregate to be last
-

@@ -1,10 +1,10 @@
 
-NULL_plot <- function(n = 1) {
+NULL_plot <- function(n = 1, .size  = 5) {
   text <- "The series does not exhibit exuberant behavior"
   np <- list(length = n)
   for (i in 1:n) {
     np[[i]] <- ggplot() + 
-      annotate("text", x = 4, y = 25, size = 5, label = text) +
+      annotate("text", x = 4, y = 25, size = .size, label = text) +
       theme_void()
   }
   if (n > 1) np else np[[1]] 
@@ -43,16 +43,19 @@ scale_custom <- function(object, div = 10) {
 # Plot Normal Series ------------------------------------------------------
 
 
-plot_var <- function(.data, .var) {
+plot_var <- function(.data, .var, custom_labels = TRUE) {
   
-    .data %>% 
+    g <- .data %>% 
     # mutate(last_obs = ifelse(row_number() > nrow(.) - 1, TRUE, FALSE)) %>% 
     ggplot(aes_string("Date", as.name(.var))) +
     geom_line() + ylab("") + xlab("") +
     # geom_point(aes_string(col = last_obs)) +
-    theme_light() + ggtitle("") +
-    scale_custom(object = .data)
+    theme_light() + ggtitle("") 
     
+    if(custom_labels){
+      g <- g + scale_custom(object = .data)
+    }
+    g
 }
   
 # my_gg <- price %>% 
@@ -69,10 +72,15 @@ plot_var <- function(.data, .var) {
 
 # Autoplot radf objects ---------------------------------------------------
 
-autoplot_var <- function(radf_var, cv_var, input) {
-  exuber::autoplot(radf_var, cv = cv_var, include = TRUE, select = input) + 
-    ggtitle("") +
-    scale_custom(object = fortify(radf_var, cv = cv_var))
+autoplot_var <- function(radf_var, cv_var, input, custom_labels = TRUE) {
+  g <- exuber::autoplot(radf_var, cv = cv_var, include = TRUE, select = input) + 
+    ggtitle("")
+  
+  if(custom_labels){
+    g <- g + scale_custom(object = fortify(radf_var, cv = cv_var))
+  }
+  g
+    
 }
 
 # Datestamp into yq
