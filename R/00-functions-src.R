@@ -22,7 +22,7 @@ extract_yq <- function(object) {
     rename(breaks = Date)
 }
 
-scale_custom <- function(object, div = 10) {
+scale_custom <- function(object, div = 7) {
   require(lubridate)
   custom_date <- function(object, variable, div) {
     
@@ -43,21 +43,56 @@ scale_custom <- function(object, div = 10) {
 # Plot Normal Series ------------------------------------------------------
 
 
-plot_var <- function(.data, .var, custom_labels = TRUE) {
-  
-    g <- .data %>% 
+plot_var <- function(.data, .var, custom_labels = TRUE, rect = FALSE, 
+                     rect_data = NULL) {
+  g <- .data %>% 
     # mutate(last_obs = ifelse(row_number() > nrow(.) - 1, TRUE, FALSE)) %>% 
     ggplot(aes_string("Date", as.name(.var))) +
-    geom_line() + ylab("") + xlab("") +
+    geom_line(size = 0.7) + ylab("") + xlab("") + ggtitle("") +
     # geom_point(aes_string(col = last_obs)) +
-    theme_light() + ggtitle("") 
-    
-    if(custom_labels){
-      g <- g + scale_custom(object = .data)
-    }
-    g
-}
+    theme_light()
   
+  if (rect) {
+    g <- g +  geom_rect(
+      mapping = aes(xmin = Start, xmax = End, ymin = -Inf, ymax = +Inf),
+      data = rect_data, inherit.aes=FALSE,
+      fill = "grey70", alpha = 0.55
+    )
+  }
+  
+  if(custom_labels){
+    g <- g + scale_custom(object = .data)
+  }
+  g
+}
+
+growth_rate <- function(x) log(x) - dplyr::lag(log(x))
+
+plot_growth_var <- function(.data, .var, rect_data) {
+  
+  .data <- .data %>% 
+    mutate_at(vars(-Date), growth_rate) %>% 
+    tidyr::drop_na()
+
+  q75 <- apply(.data[,-1], 1, quantile, 0.25)
+  q25 <- apply(.data[,-1], 1, quantile, 0.75)
+  suppressWarnings({
+    .data %>% 
+      ggplot(aes_string("Date", as.name(.var))) +
+      theme_light() + 
+      geom_rect(
+        mapping = aes(xmin = Start, xmax = End, ymin = -Inf, ymax = +Inf),
+        data = rect_data, inherit.aes=FALSE, fill = "grey70", alpha = 0.55)+
+      geom_ribbon(aes(ymin = q25, ymax = q75), fill = "#174B97", alpha = 0.5) +
+      geom_line(size = 0.7) + ylab("") + xlab("") + ggtitle("") +
+      scale_custom(object = .data)
+  })
+}
+
+# .data <- price
+# .var <- "Aggregate"
+# rect_data = exuber::datestamp(radf_price, mc_con)[["Aggregate"]]
+    
 # my_gg <- price %>% 
 #   mutate(last_obs = ifelse(row_number() > nrow(.) - 1, TRUE, FALSE)) %>% 
 #   mutate_if(is.numeric, round, 2) %>% 

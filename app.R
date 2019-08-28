@@ -77,7 +77,7 @@ header <- dashboardHeaderPlus(
 
 
 sidebar <- dashboardSidebar(
-  collapsed = TRUE,
+  collapsed = FALSE,
   sidebarMenu(
     sidebarMenu(
       id = "tabs",
@@ -150,10 +150,9 @@ body <- dashboardBody(
         
     tabItem(
       tabName = "overview",
-      fluidPage(
+      fluidPage(style = "padding: 0 5em;",
         
-        h2("Overview",
-           style = "padding:1em 0 0 20px;"),
+        h2("Overview", style = "padding:1em 0 0 20px;"),
         
         h3("Chronology of exuberance in international housing markets.", 
            style = "padding:0 0 0 20px;"),
@@ -163,9 +162,7 @@ body <- dashboardBody(
           (i.e., the periods during which the estimated BSADF statistics 
           exceeded the corresponding 95% critical values). Most prominently, 
           they show thesynchronization of exuberance across markets in the 
-          2000s. ", 
-          style = "padding:1em 0 2em 1.5em;"),
-        
+          2000s. ",  style = "padding:1em 0 2em 1.5em;"),
         fluidRow(
           box2(
             title = "Real House Prices",
@@ -177,11 +174,50 @@ body <- dashboardBody(
             subtitle = "Peak-to-Trough Contraction Periods",
             plotOutput("autoplot_datestamp_income")
           )
+        ),
+        fluidRow(
+          box2(
+            title = "Aggregate Real House Prices",
+            subtitle = "Index Levels (1975 Q1 = 100)",
+            plotOutput("plot_price_aggregate")
+          ),
+          box2(
+            title = "Aggregate House-Price-to-Income Ratio",
+            subtitle = "Index Levels (1975 Q1 = 100)",
+            plotOutput("plot_income_aggregate")
+          ),
+          p(
+            em(
+              span("NOTE:"),
+              span("Shaded areas ", style = "color:#B3B3B3"),
+              span(
+                "indicate contraction (peak to trough) of the 
+                aggregate real house price index.")
+            ),  style = "text-align:center;font-size:14px;"),
+          br()
+        ),
+        fluidRow(
+          box2(
+            title = "Aggregate Real House Prices",
+            subtitle = "Growth Rates (percent quarter-on-quarter)",
+            plotOutput("plot_growth_price_aggregate")
+          ),
+          box2(
+            title = "Aggregate House-Price-to-Income Ratio",
+            subtitle = "Growth Rates (percent quarter-on-quarter)",
+            plotOutput("plot_growth_income_aggregate")
+          ),
+          p(
+            em(
+              span("NOTE: The "),
+              span("interquartile range", style = "color:#174B97"),
+              span(
+                "refers to the difference between the 
+                upper and lower quartiles (the highest and lowest 25 percent) 
+                of the growth rates across all countries.")
+            ), style = "text-align:center;font-size:14px;")
         )
       ),
-      br(),
-      br(),
-      br(),
       br(),
       includeHTML("content/footer.html")
     ),
@@ -192,12 +228,12 @@ body <- dashboardBody(
     tabItem(
       tabName = "analysis",
       fluidPage(
-        style = "padding:0;",
+        style = "padding: 0 5em;",
         
-        h2("Analysis",
+        h2("Analysis", 
            style = "padding: 1em 0 0 1em;"),
         
-        div(class = "row", 
+        div(class = "row",  
             style = "text-align:left;padding:2em;",
             
             column(width = 6, 
@@ -208,15 +244,16 @@ body <- dashboardBody(
                      of the specific periods of exuberance.")
             ),
             column(width = 4,
-                   style = "padding-left:5em;",
+                   style = "padding-left: 3em;",
                    selectInput("country", "Select Country:", cnames)
             ),
             column(width = 2,
-                   style = "padding-top:1.5em;",
-                   downloadButton("report", "Generate report")
+                   style = "text-align:center;padding-top:1.5em;",
+                   downloadButton("report", "Download Report"),
+                   p(HTML("Generate Dynamic Report <br> (May be slow)"),
+                     style = "font-size:11px;")
                    )
         ),
-        
         fluidRow(
           box(
             title = "Real House Prices",
@@ -277,6 +314,7 @@ body <- dashboardBody(
             ), 
             style = "text-align:center;font-size:14px;")
         ),
+        br(),
         
         fluidRow(
           box(
@@ -307,10 +345,11 @@ body <- dashboardBody(
       tabName = "download",
       
       fluidPage(
+        style = "padding: 0 5em;",
         
         h2("Download", 
            style = "padding:1em 0 0 20px;"),
-        h3("Exuberance Statistics", 
+        h3("1) Exuberance Statistics", 
            style = "padding:0 0 0 20px;"),
         br(),
         fluidRow(
@@ -327,7 +366,7 @@ body <- dashboardBody(
           )
           
         ),
-        h3("Raw Data", 
+        h3("2) Raw Data", 
            style = "padding:0 0 0 20px;"),
         br(),
         fluidRow(
@@ -360,15 +399,36 @@ server <- function(input, output, session) {
   output$autoplot_datestamp_price <- 
     renderPlot({
       autoplot_datestamp_price
-      # exuber::datestamp(radf_price, cv = mc_con) %>% 
-      #   exuber::autoplot() +
-      #   scale_color_viridis_d() +
-      #    scale_custom(fortify(radf_price))
     })
+  
   output$autoplot_datestamp_income <- 
     renderPlot({
       autoplot_datestamp_income
-        # scale_custom(fortify(radf_price))
+    })
+  
+  output$plot_price_aggregate <- 
+    renderPlot({
+      plot_var(price, "Aggregate", rect = TRUE,
+               rect_data = exuber::datestamp(radf_price, mc_con)[["Aggregate"]]) 
+        
+    })
+  
+  output$plot_income_aggregate <- 
+    renderPlot({
+      plot_var(price_income, "Aggregate", rect = TRUE,
+               rect_data = exuber::datestamp(radf_income, mc_con)[["Aggregate"]])
+    })
+  
+  output$plot_growth_price_aggregate <- 
+    renderPlot({
+      plot_growth_var(price, "Aggregate",
+                      rect_data = exuber::datestamp(radf_price, mc_con)[["Aggregate"]]) 
+    })
+  
+  output$plot_growth_income_aggregate <- 
+    renderPlot({
+      plot_growth_var(price_income, "Aggregate",
+                      rect_data = exuber::datestamp(radf_income, mc_con)[["Aggregate"]])
     })
   
   # Analysis ----------------------------------------------------------------

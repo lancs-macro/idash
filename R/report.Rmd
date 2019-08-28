@@ -1,6 +1,6 @@
 ---
 output: pdf_document
-geometry: "left=3cm,right=3cm,top=1.5cm,bottom=1.7cm"
+geometry: "left=3cm,right=3cm,top=2cm,bottom=2cm"
 header-includes:
   - \usepackage{color}
   - \usepackage[dvipsnames]{xcolor}

@@ -376,6 +376,15 @@ p {
 
 /* Media Queries */
 
+
+@media (max-width: 978px) {
+    
+    .container-fluid {
+      padding:0  !important;
+      margin:0;
+    }
+}
+
 @media (min-width: 700px) {
 
   .grid {

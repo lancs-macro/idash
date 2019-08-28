@@ -6,7 +6,7 @@ library(tidyverse)
 vers <- xml2::read_html("https://www.dallasfed.org/institute/houseprice#tab2") %>%
   rvest::html_nodes("a") %>%
   rvest::html_attr("href") %>%
-  str_subset(".xlsx") %>% 
+  stringr::str_subset(".xlsx") %>% 
   `[`(1) %>% 
   str_extract("(?<=houseprice/).+(?=.xlsx)")
 

@@ -33,12 +33,12 @@ summary_income <-
 rejected_price <- 
   radf_price %>% 
   diagnostics(cv = mc_con) %>% 
-  pluck("rejected")
+  .$rejected
 
 rejected_income <- 
   radf_income %>% 
   diagnostics(cv = mc_con) %>% 
-  pluck("rejected")
+  .$rejected
 
 datestamp_price <-
   radf_price %>% 
@@ -150,20 +150,20 @@ plot_income <-
 
 estimation_price <- 
   radf_price %>%
-  pluck("bsadf") %>% 
+  .$bsadf %>% 
   as_tibble() %>% 
   mutate(Date = index(radf_price, trunc = TRUE)) %>% 
   select(Date, everything())
   
 estimation_income <- 
   radf_income %>%
-  pluck("bsadf") %>% 
+  .$bsadf %>% 
   as_tibble() %>% 
   mutate(Date = index(radf_price, trunc = TRUE)) %>% 
   select(Date, everything())
 
 cv_seq <- mc_con %>% 
-  pluck("bsadf_cv") %>% 
+  .$bsadf_cv %>% 
   as_tibble() %>% 
   "["(-1,) %>% 
   bind_cols(Date = index(radf_price, trunc = TRUE)) %>% 
@@ -194,5 +194,3 @@ path_store <- glue::glue("data/RDS/{store}.rds")
 for (i in seq_along(store)) {
   saveRDS(get(store[i]), file = path_store[i])
 }
-
-
