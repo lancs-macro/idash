@@ -7,11 +7,11 @@
 library(shiny)
 library(shinydashboard)
 library(shinydashboardPlus)
+library(rlang)
 library(dplyr)
+library(purrr)
 library(ggplot2)
 library(DT)
-library(rlang)
-library(purrr)
 
 # Set Options -------------------------------------------------------------
 
@@ -77,7 +77,7 @@ header <- dashboardHeaderPlus(
 
 
 sidebar <- dashboardSidebar(
-  collapsed = FALSE,
+  collapsed = TRUE,
   sidebarMenu(
     sidebarMenu(
       id = "tabs",
@@ -161,7 +161,7 @@ body <- dashboardBody(
           and house-price-to-income ratios displayed explosive dynamics 
           (i.e., the periods during which the estimated BSADF statistics 
           exceeded the corresponding 95% critical values). Most prominently, 
-          they show thesynchronization of exuberance across markets in the 
+          they show the synchronization of exuberance across markets in the 
           2000s. ",  style = "padding:1em 0 2em 1.5em;"),
         fluidRow(
           box2(
