@@ -5,8 +5,8 @@ account: lancs-macro
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 705554
-bundleId: 2363774
+bundleId: 2463622
 url: https://lancs-macro.shinyapps.io/international-housing-observatory/
-when: 1567001724.98919
+when: 1570051165.45308
 asMultiple: FALSE
 asStatic: FALSE

@@ -105,7 +105,8 @@ body <- dashboardBody(
   ######## Customization #################
   
   tags$head(
-    
+    tags$meta(name = "description", content = "Real-time monitoring of real estate markets across the world"),
+    tags$meta(name = "keywords", content = "housing Observatory, house prices, international house prices, exuberance indicators"),
     tags$title("International Housing Observatory"),
     tags$link(rel = "shortcut icon", href = "logo.png"),
     tags$link(rel = "stylesheet", type = "text/css", 
