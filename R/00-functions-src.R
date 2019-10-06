@@ -176,23 +176,24 @@ specify_buttons <- function(filename) {
 
 
 make_DT <- function(x, filename, caption_string = ""){
-  DT::datatable(x,
-                rownames = FALSE,
-                caption = caption_string,
-                extensions = 'Buttons',
-                options = list( 
-                  dom = 'Bfrtip', #'Blfrtip'
-                  searching = FALSE,
-                  autoWidth = TRUE,
-                  paging = TRUE,
-                  # scrollY = T,
-                  scrollX = T,
-                  columnDefs = list(
-                    list(
-                      targets = c(0, 14, 18, 21), width = "80px")),
-                  buttons = specify_buttons(filename)
-                  )
-                ) %>%
+  DT::datatable(
+    x,
+    rownames = FALSE,
+    caption = caption_string,
+    extensions = 'Buttons',
+    options = list( 
+      dom = 'Bfrtip', #'Blfrtip'
+      searching = FALSE,
+      autoWidth = TRUE,
+      paging = TRUE,
+      # scrollY = T,
+      scrollX = T,
+      columnDefs = list(
+        list(
+          targets = c(0, 14, 18, 21), width = "80px")),
+      buttons = specify_buttons(filename)
+    )
+  ) %>%
     DT::formatRound(2:NCOL(x), 3) 
 }
 
