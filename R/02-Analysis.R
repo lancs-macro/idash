@@ -48,12 +48,25 @@ datestamp_income <-
   radf_income %>% 
   datestamp(cv = mc_con) 
 
+
+# Theem -------------------------------------------------------------------
+
+analysis_theme <- theme_light() +
+  theme(
+    title = element_blank(),
+    axis.title = element_blank(),
+    panel.grid.minor = element_blank() ,
+    panel.grid.major = element_line(linetype = "dashed")
+  )
+
 # autoplot ----------------------------------------------------------------
+
+# Currently not used
 
 autoplot_price <- 
   radf_price %>% 
   autoplot(cv = mc_con, include = TRUE, arrange = FALSE) %>% 
-  map( ~.x + ggtitle("") +
+  map( ~.x + analysis_theme +
          scale_custom(object = fortify(radf_price))
   )
 
@@ -63,11 +76,19 @@ autoplot_price[rejected_price] <- NULL_plot(length(rejected_price))
 autoplot_income <- 
   radf_income %>% 
   autoplot(cv = mc_con, include = TRUE, arrange = FALSE) %>% 
-  map( ~.x + ggtitle("") +
+  map( ~.x + analysis_theme +
          scale_custom(object = fortify(radf_price))
   )
 
 autoplot_income[rejected_income] <- NULL_plot(length(rejected_income))
+
+for (i in seq_along(autoplot_price)) {
+  autoplot_price[[i]]$layers[[1]]$aes_params$size <- 0.8
+}
+
+for (i in seq_along(autoplot_income)) {
+  autoplot_income[[i]]$layers[[1]]$aes_params$size <- 0.8
+}
 
 # autoplot datestamp ------------------------------------------------------
 
@@ -120,14 +141,13 @@ plot_price <- list()
 for (i in seq_along(cnames)) {
   plot_price[[i]] <- ggplot(aes_string("Date", as.name(cnames[i])), 
                          data = price) +
-    geom_line() + ylab("") + xlab("") +
-    theme_light()
+    geom_line() + analysis_theme
 }
 names(plot_price) <- cnames
 
 plot_price <- 
   plot_price %>% 
-  map( ~.x + ggtitle("") +
+  map( ~.x + analysis_theme +
          scale_custom(object = price)
   )
 
@@ -135,14 +155,13 @@ plot_price <-
 plot_income <- list()
 for (i in seq_along(cnames)) {
   plot_income[[i]] <- ggplot(aes_string("Date", as.name(cnames[i])), data = price_income) +
-    geom_line() + ylab("") + xlab("") +
-    theme_light()
+    geom_line() + analysis_theme
 }
 names(plot_income) <- cnames
 
 plot_income <- 
   plot_income %>% 
-  map( ~.x + ggtitle("") +
+  map( ~.x + analysis_theme +
          scale_custom(object = fortify(radf_price))
   )
 
@@ -186,6 +205,7 @@ store <- c("price", "price_income",
            c("cnames"), 
            "mc_con", "cv_seq", "cv_table",
            glue::glue("estimation_{items}"),
+           glue::glue("autoplot_{items}"),
            glue::glue("autoplot_datestamp_{items}"),
            glue::glue("radf_{items}"))
 

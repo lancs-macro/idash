@@ -42,20 +42,27 @@ scale_custom <- function(object, div = 7) {
 
 # Plot Normal Series ------------------------------------------------------
 
+my_theme <- theme_light() +
+  theme(
+    axis.title.x = element_blank(),
+    panel.grid.minor = element_blank() ,
+    panel.grid.major = element_line(linetype = "dashed")
+  )
+
 
 plot_var <- function(.data, .var, custom_labels = TRUE, rect = FALSE, 
                      rect_data = NULL) {
   g <- .data %>% 
     # mutate(last_obs = ifelse(row_number() > nrow(.) - 1, TRUE, FALSE)) %>% 
     ggplot(aes_string("Date", as.name(.var))) +
-    geom_line(size = 0.7) + ylab("") + xlab("") + ggtitle("") +
-    # geom_point(aes_string(col = last_obs)) +
-    theme_light()
-  
+    geom_line(size = 0.8) + 
+    my_theme +
+    theme(axis.title.y = element_blank())
+
   if (rect) {
     g <- g +  geom_rect(
       mapping = aes(xmin = Start, xmax = End, ymin = -Inf, ymax = +Inf),
-      data = rect_data, inherit.aes=FALSE,
+      data = rect_data, inherit.aes =FALSE,
       fill = "grey70", alpha = 0.55
     )
   }
@@ -66,7 +73,7 @@ plot_var <- function(.data, .var, custom_labels = TRUE, rect = FALSE,
   g
 }
 
-growth_rate <- function(x) log(x) - dplyr::lag(log(x))
+growth_rate <- function(x, n  = 1) (log(x) - dplyr::lag(log(x), n = n))*100
 
 plot_growth_var <- function(.data, .var, rect_data) {
   
@@ -79,12 +86,13 @@ plot_growth_var <- function(.data, .var, rect_data) {
   suppressWarnings({
     .data %>% 
       ggplot(aes_string("Date", as.name(.var))) +
-      theme_light() + 
       geom_rect(
         mapping = aes(xmin = Start, xmax = End, ymin = -Inf, ymax = +Inf),
         data = rect_data, inherit.aes=FALSE, fill = "grey70", alpha = 0.55)+
       geom_ribbon(aes(ymin = q25, ymax = q75), fill = "#174B97", alpha = 0.5) +
-      geom_line(size = 0.7) + ylab("") + xlab("") + ggtitle("") +
+      geom_line(size = 0.8) + 
+      ylab("% Quarter on Quarter") +
+      my_theme +
       scale_custom(object = .data)
   })
 }
@@ -107,9 +115,20 @@ plot_growth_var <- function(.data, .var, rect_data) {
 
 # Autoplot radf objects ---------------------------------------------------
 
+
+analysis_theme <- theme_light() +
+  theme(
+    title = element_blank(),
+    axis.title = element_blank(),
+    panel.grid.minor = element_blank() ,
+    panel.grid.major = element_line(linetype = "dashed")
+  )
+
 autoplot_var <- function(radf_var, cv_var, input, custom_labels = TRUE) {
   g <- exuber::autoplot(radf_var, cv = cv_var, include = TRUE, select = input) + 
-    ggtitle("")
+    analysis_theme
+  
+  g$layers[[1]]$aes_params$size <- 0.8
   
   if(custom_labels){
     g <- g + scale_custom(object = fortify(radf_var, cv = cv_var))

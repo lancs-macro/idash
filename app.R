@@ -1,7 +1,5 @@
 
-# pkgs <- c("shiny", "shinydashboard", "shinydashboardPlus", "dplyr", 
-#           "DT", "rlang")
-# 
+# pkgs <- c("shiny", "shinydashboard", "shinydashboardPlus", "tidyverse","DT", "rlang")
 # lapply(pkgs, library, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)
 
 library(shiny)
@@ -155,7 +153,7 @@ body <- dashboardBody(
         
         h2("Overview", style = "padding:1em 0 0 20px;"),
         
-        h3("Chronology of exuberance in international housing markets.", 
+        h3("Chronology of exuberance in international housing markets", 
            style = "padding:0 0 0 20px;"),
         
         p("The below figures show the periods during which real house prices 
@@ -167,24 +165,24 @@ body <- dashboardBody(
         fluidRow(
           box2(
             title = "Real House Prices",
-            subtitle = "Peak-to-Trough Contraction Periods",
+            subtitle = "Episodes of Exuberance",
             plotOutput("autoplot_datestamp_price")
           ),
           box2(
             title = "House-Price-to-Income Ratio",
-            subtitle = "Peak-to-Trough Contraction Periods",
+            subtitle = "Episodes of Exuberance",
             plotOutput("autoplot_datestamp_income")
           )
         ),
         fluidRow(
           box2(
             title = "Aggregate Real House Prices",
-            subtitle = "Index Levels (1975 Q1 = 100)",
+            subtitle = "Index Levels",
             plotOutput("plot_price_aggregate")
           ),
           box2(
             title = "Aggregate House-Price-to-Income Ratio",
-            subtitle = "Index Levels (1975 Q1 = 100)",
+            subtitle = "Index Levels",
             plotOutput("plot_income_aggregate")
           ),
           p(
@@ -200,12 +198,12 @@ body <- dashboardBody(
         fluidRow(
           box2(
             title = "Aggregate Real House Prices",
-            subtitle = "Growth Rates (percent quarter-on-quarter)",
+            subtitle = "Growth Rates",
             plotOutput("plot_growth_price_aggregate")
           ),
           box2(
             title = "Aggregate House-Price-to-Income Ratio",
-            subtitle = "Growth Rates (percent quarter-on-quarter)",
+            subtitle = "Growth Rates",
             plotOutput("plot_growth_income_aggregate")
           ),
           p(
@@ -251,7 +249,7 @@ body <- dashboardBody(
             column(width = 2,
                    style = "text-align:center;padding-top:1.5em;",
                    downloadButton("report", "Download Report"),
-                   p(HTML("Generate Dynamic Report <br> (May be slow)"),
+                   p(HTML("Generate Dynamic Report)"),
                      style = "font-size:11px;")
                    )
         ),
@@ -395,7 +393,7 @@ body <- dashboardBody(
 
 server <- function(input, output, session) {
   
-  # overview ----------------------------------------------------------------
+  # Overview ----------------------------------------------------------------
   
   output$autoplot_datestamp_price <- 
     renderPlot({
@@ -422,14 +420,16 @@ server <- function(input, output, session) {
   
   output$plot_growth_price_aggregate <- 
     renderPlot({
-      plot_growth_var(price, "Aggregate",
-                      rect_data = exuber::datestamp(radf_price, mc_con)[["Aggregate"]]) 
+      plot_growth_var(
+        price, "Aggregate",
+        rect_data = exuber::datestamp(radf_price, mc_con)[["Aggregate"]]) 
     })
   
   output$plot_growth_income_aggregate <- 
     renderPlot({
-      plot_growth_var(price_income, "Aggregate",
-                      rect_data = exuber::datestamp(radf_income, mc_con)[["Aggregate"]])
+      plot_growth_var(
+        price_income, "Aggregate",
+        rect_data = exuber::datestamp(radf_income, mc_con)[["Aggregate"]])
     })
   
   # Analysis ----------------------------------------------------------------
@@ -442,23 +442,33 @@ server <- function(input, output, session) {
     # filename = "mpla.pdf",
     
     content = function(file) {
-      
-      tempReport <- file.path(tempdir(), "report.Rmd")
-      file.copy("R/report.Rmd", tempReport, overwrite = TRUE)
-      
-      # Set up parameters to pass to Rmd document
-      params <- list(country = input$country, 
-                     version = paste0(" ", gsub(" ", ":", vers)),
-                     data_price = price,
-                     data_price_income = price_income,
-                     rprice = radf_price,
-                     rincome = radf_income,
-                     cv = mc_con
-                     )
-      
-      rmarkdown::render(tempReport, output_file = file, params = params,
-                        envir = new.env(parent = globalenv())
-      )
+      withProgress(
+        value = 0.2,
+        message = 'Rendering, please wait!', {
+        
+          tempReport <- file.path(tempdir(), "report.Rmd")
+          file.copy("R/report.Rmd", tempReport, overwrite = TRUE)
+          
+          # Set up parameters to pass to Rmd document
+          params <- list(
+            country = input$country, 
+            version = paste0(" ", gsub(" ", ":", vers)),
+            data_price = price,
+            data_price_income = price_income,
+            rprice = radf_price,
+            rincome = radf_income,
+            cv = mc_con
+          )
+          
+          rmarkdown::render(
+            tempReport, 
+            output_file = file, 
+            params = params,
+            envir = new.env(parent = globalenv())
+          )
+          shiny::setProgress(1) 
+          }
+        )
     }
   )
   

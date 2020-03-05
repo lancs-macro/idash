@@ -40,6 +40,7 @@ plot_var(params$data_price, params$country) +
 ```{r plot income, fig.width=7, fig.height=3, fig.align='center'}
 plot_var(params$data_price_income, params$country) +
   ggtitle("House-Price-to-Income Ratio")
+shiny::setProgress(0.4)
 ```
 
 ## \textcolor{MidnightBlue}{Exuberance Statistics}
@@ -64,7 +65,7 @@ cat(c("\\begin{table}[!htpb]
     "\\end{minipage} 
 \\end{table}"
 ))  
-
+shiny::setProgress(0.6)
 ```
 
 ## \textcolor{MidnightBlue}{Date-Stamping Periods of Exuberance}
@@ -93,6 +94,7 @@ if (any(dg_income)) {
 }else{
   NULL_plot(.size = 3)
 }
+shiny::setProgress(0.8) 
 
 ```
 
@@ -122,9 +124,9 @@ cat(c("\\begin{table}[!htpb]
     "\\end{minipage}
 \\end{table}"
 ))
+shiny::setProgress(0.9) 
 
 ```
-
 \vfill
 
 \center{\textit{ © 2019 International Housing Observatory. All rights reserverd.}}
