@@ -1,4 +1,6 @@
 
+library(rlang)
+
 NULL_plot <- function(n = 1, .size  = 5) {
   text <- "The series does not exhibit exuberant behavior"
   np <- list(length = n)
