@@ -1,6 +1,7 @@
 library(here)
+library(tidyverse)
 
-# source(here::here("R", "01-Manipulation.R"))
+source(here::here("R", "01-Manipulation.R"))
 source(here::here("R", "00-functions-src.R"))
 
 library(exuber)
@@ -191,11 +192,11 @@ cv_seq <- mc_con %>%
 cv_table <- 
   tibble(
     Countries = names(price)[-1],
-    gsadf_rhpi = radf_price$gsadf,
-    gsadf_hpi_dpi = radf_income$gsadf,
-    gsadf_cv90 = mc_con$gsadf_cv[1],
-    gsadf_cv95 = mc_con$gsadf_cv[2],
-    gsadf_cv99 = mc_con$gsadf_cv[3]
+    `Real House Prices` = radf_price$gsadf,
+    `House-Price-Income` = radf_income$gsadf,
+    `90% Critical Values` = mc_con$gsadf_cv[1],
+    `95% Critical Values` = mc_con$gsadf_cv[2],
+    `99% Critical Values` = mc_con$gsadf_cv[3]
   )
 
 # save data ---------------------------------------------------------------
@@ -214,3 +215,4 @@ path_store <- glue::glue("data/RDS/{store}.rds")
 for (i in seq_along(store)) {
   saveRDS(get(store[i]), file = path_store[i])
 }
+

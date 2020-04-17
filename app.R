@@ -2,44 +2,28 @@
 # pkgs <- c("shiny", "shinydashboard", "shinydashboardPlus", "tidyverse","DT", "rlang")
 # lapply(pkgs, library, character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)
 
-library(shiny)
-library(shinydashboard)
-library(shinydashboardPlus)
-library(rlang)
-library(dplyr)
-library(purrr)
-library(ggplot2)
-library(DT)
+suppressMessages({
+  library(shiny)
+  library(shinydashboard)
+  library(shinydashboardPlus)
+  library(tidyverse)
+  library(DT)
+  library(shinyWidgets)
+})
 
 # Set Options -------------------------------------------------------------
 
-opt_src <- "main" 
-opt_load_rds <- TRUE
-
-# Load everything ---------------------------------------------------------
-
-if (opt_load_rds) {
-  path_store_rds <- list.files("data/RDS", full.names = TRUE)
-  store_rds <-  stringr::str_remove(list.files("data/RDS"), ".rds")
-  for (i in seq_along(path_store_rds)) {
-    assign(store_rds[i], readRDS(file = path_store_rds[i]))
-  }
+path_store_rds <- list.files("data/RDS", full.names = TRUE)
+store_rds <-  stringr::str_remove(list.files("data/RDS"), ".rds")
+for (i in seq_along(path_store_rds)) {
+  assign(store_rds[i], readRDS(file = path_store_rds[i]))
 }
-
 
 # Source ------------------------------------------------------------------
 
-if (opt_src == "main") {
-  # suppressMessages(
-    list.files("R", full.names = TRUE, pattern = "-src.R") %>% 
-      purrr::map(source)
-  # )
-}else {
-  # suppressMessages(
-    list.files(c("R"), full.names = TRUE, pattern = ".R") %>% 
-      purrr::map(source)
-  # )
-}
+suppressMessages({
+  source("R/00-functions-src.R", local = TRUE)$value
+})
 
 # Version -----------------------------------------------------------------
 
@@ -49,28 +33,30 @@ vers <- price[nrow(price), 1][[1]] %>%
 # Header ------------------------------------------------------------------
 
 header <- dashboardHeaderPlus(
-  titleWidth = 380,
-  title = tagList(
-    span(class = "logo-lg", 
-         span(img(src = "logo.png",  height = "32", width = "32"),
-               "International Housing Observatory")), 
-    img(src = "logo.png",  height = "32", width = "32")
-    # img(src = "favicon-32x32.png")
+  titleWidth = 430,
+  title = shiny::tagList(
+    span(
+      class = "logo-lg",
+      a(
+        href = "https://int.housing-observatory.com/",
+        span(
+          shiny::img(src = "logo.png",  height = "30", width = "30"),
+          HTML('<span class="name"> International </span>
+             <span class= "bottom-name"> Housing Observatory </span>')
+        )
+      )
     ),
-
+    shiny::img(src = "logo.png",  height = "30", width = "30")
+  ),
   tags$li(
-    a(href = 'https://github.com/lancs-macro/international-housing-observatory',
-      target = "_`blank",
-      HTML('<i title="Browse our github repositoty" class="fab fa-github"></i>'),
-      style = "font-size:28px; padding-top:10px; padding-bottom:10px;"),
-    class = "dropdown")#,
-  # tags$li(
-  #   a(href = 'https://github.com/lancs-macro/international-housing-observatory',
-  #     target = "_`blank",
-  #     img(src = "ukho-logo.png", height = "32", width = "32"),
-  #     style = "font-size:28px; padding-top:10px; padding-bottom:10px;"),
-  #   class = "dropdown")
+    class = "dropdown",
+    p(
+      class = "release", 
+      glue::glue("Release: {vers}")
+    )
+  )
 )
+
 # Sidebar -----------------------------------------------------------------
 
 
@@ -79,12 +65,12 @@ sidebar <- dashboardSidebar(
   sidebarMenu(
     sidebarMenu(
       id = "tabs",
-      menuItem("Home", tabName = "home", icon = icon("home"), selected = TRUE),
-      menuItem("Overview", tabName = "overview", 
+      # menuItem("Home", tabName = "home", icon = icon("home"), selected = TRUE),
+      menuItem("Overview", tabName = "overview", selected = TRUE,
                icon = icon("globe",  lib = "glyphicon")),
       menuItem("Analysis", tabName = "analysis", icon = icon("table")),
-      menuItem("Data & Methodology", tabName = "methodology",
-               icon = icon("chalkboard-teacher")),
+      # menuItem("Data & Methodology", tabName = "methodology",
+      #          icon = icon("chalkboard-teacher")),
       menuItem("Download Data", tabName = "download", 
                icon = icon("download")),
       hr()
@@ -96,9 +82,9 @@ sidebar <- dashboardSidebar(
 
 
 body <- dashboardBody(
- 
+  
   # Make theme "html/theme.R"
-  theme_boe_website,
+  # theme_boe_website,
   
   ######## Customization #################
   
@@ -107,8 +93,12 @@ body <- dashboardBody(
     tags$meta(name = "keywords", content = "housing Observatory, house prices, international house prices, exuberance indicators"),
     tags$title("International Housing Observatory"),
     tags$link(rel = "shortcut icon", href = "logo.png"),
+    
     tags$link(rel = "stylesheet", type = "text/css", 
-              href = "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"),
+              href = 'https://fonts.googleapis.com/css?family=Gloria Hallelujah'),
+    tags$link(
+      rel = "stylesheet", type = "text/css",
+      href = "https://use.fontawesome.com/releases/v5.5.0/css/all.css"),
     includeHTML("content/google-analytics.html")
     
   ),
@@ -134,103 +124,104 @@ body <- dashboardBody(
   
   
   tabItems(
-
-  # Home Tab ----------------------------------------------------------------    
+    
+    # Home Tab ----------------------------------------------------------------    
+    
+    # tabItem(
+    #   tabName = "home",
+    #   includeCSS("content/style.css"),
+    #   includeHTML("content/home.html"),
+    #   includeHTML("content/footer.html")
+    #   
+    # ),
+    
+    # Overview Tab ------------------------------------------------------------
     
     tabItem(
-      tabName = "home",
-      includeCSS("content/style.css"),
-      includeHTML("content/home.html"),
-      includeHTML("content/footer.html")
-            
-    ),
-
-# Overview Tab ------------------------------------------------------------
-        
-    tabItem(
       tabName = "overview",
-      fluidPage(style = "padding: 0 5em;",
-        
-        h2("Overview", style = "padding:1em 0 0 20px;"),
-        
-        h3("Chronology of exuberance in international housing markets", 
-           style = "padding:0 0 0 20px;"),
-        
-        p("The below figures show the periods during which real house prices 
+      
+      includeCSS("content/style.css"),
+      
+      fluidPage(
+                h2("Overview", style = "padding:0 0 0 20px;"),
+                
+                h3("Chronology of exuberance in international housing markets", 
+                   style = "padding:0 0 0 20px;"),
+                
+                p("The below figures show the periods during which real house prices 
           and house-price-to-income ratios displayed explosive dynamics 
           (i.e., the periods during which the estimated BSADF statistics 
           exceeded the corresponding 95% critical values). Most prominently, 
           they show the synchronization of exuberance across markets in the 
           2000s. ",  style = "padding:1em 0 2em 1.5em;"),
-        fluidRow(
-          box2(
-            title = "Real House Prices",
-            subtitle = "Episodes of Exuberance",
-            plotOutput("autoplot_datestamp_price")
-          ),
-          box2(
-            title = "House-Price-to-Income Ratio",
-            subtitle = "Episodes of Exuberance",
-            plotOutput("autoplot_datestamp_income")
-          )
-        ),
-        fluidRow(
-          box2(
-            title = "Aggregate Real House Prices",
-            subtitle = "Index Levels",
-            plotOutput("plot_price_aggregate")
-          ),
-          box2(
-            title = "Aggregate House-Price-to-Income Ratio",
-            subtitle = "Index Levels",
-            plotOutput("plot_income_aggregate")
-          ),
-          p(
-            em(
-              span("NOTE:"),
-              span("Shaded areas ", style = "color:#B3B3B3"),
-              span(
-                "indicate contraction (peak to trough) of the 
+                fluidRow(
+                  box2(
+                    title = "Real House Prices",
+                    subtitle = "Episodes of Exuberance",
+                    plotOutput("autoplot_datestamp_price")
+                  ),
+                  box2(
+                    title = "House-Price-to-Income Ratio",
+                    subtitle = "Episodes of Exuberance",
+                    plotOutput("autoplot_datestamp_income")
+                  )
+                ),
+                fluidRow(
+                  box2(
+                    title = "Aggregate Real House Prices",
+                    subtitle = "Index Levels",
+                    plotOutput("plot_price_aggregate")
+                  ),
+                  box2(
+                    title = "Aggregate House-Price-to-Income Ratio",
+                    subtitle = "Index Levels",
+                    plotOutput("plot_income_aggregate")
+                  ),
+                  p(
+                    em(
+                      span("NOTE:"),
+                      span("Shaded areas ", style = "color:#B3B3B3"),
+                      span(
+                        "indicate contraction (peak to trough) of the 
                 aggregate real house price index.")
-            ),  style = "text-align:center;font-size:14px;"),
-          br()
-        ),
-        fluidRow(
-          box2(
-            title = "Aggregate Real House Prices",
-            subtitle = "Growth Rates",
-            plotOutput("plot_growth_price_aggregate")
-          ),
-          box2(
-            title = "Aggregate House-Price-to-Income Ratio",
-            subtitle = "Growth Rates",
-            plotOutput("plot_growth_income_aggregate")
-          ),
-          p(
-            em(
-              span("NOTE: The "),
-              span("interquartile range", style = "color:#174B97"),
-              span(
-                "refers to the difference between the 
+                    ),  style = "text-align:center;font-size:14px;"),
+                  br()
+                ),
+                fluidRow(
+                  box2(
+                    title = "Aggregate Real House Prices",
+                    subtitle = "Growth Rates",
+                    plotOutput("plot_growth_price_aggregate")
+                  ),
+                  box2(
+                    title = "Aggregate House-Price-to-Income Ratio",
+                    subtitle = "Growth Rates",
+                    plotOutput("plot_growth_income_aggregate")
+                  ),
+                  p(
+                    em(
+                      span("NOTE: The "),
+                      span("interquartile range", style = "color:#174B97"),
+                      span(
+                        "refers to the difference between the 
                 upper and lower quartiles (the highest and lowest 25 percent) 
                 of the growth rates across all countries.")
-            ), style = "text-align:center;font-size:14px;")
-        )
+                    ), style = "text-align:center;font-size:14px;")
+                )
       ),
       br(),
       includeHTML("content/footer.html")
     ),
     
-
-# Analysis Tab ------------------------------------------------------------
+    
+    # Analysis Tab ------------------------------------------------------------
     
     tabItem(
       tabName = "analysis",
       fluidPage(
-        style = "padding: 0 5em;",
         
         h2("Analysis", 
-           style = "padding: 1em 0 0 1em;"),
+           style = "padding: 0  0 0 1em;"),
         
         div(class = "row",  
             style = "text-align:left;padding:2em;",
@@ -248,10 +239,12 @@ body <- dashboardBody(
             ),
             column(width = 2,
                    style = "text-align:center;padding-top:1.5em;",
-                   downloadButton("report", "Download Report"),
-                   p(HTML("Generate Dynamic Report)"),
-                     style = "font-size:11px;")
-                   )
+                   downloadButton(
+                     class = "btn-report",
+                     "report", "Download Report"),
+                   p(HTML("(Generate Dynamic Report)"),
+                     style = "font-size:11px; padding-top:1rem;")
+            )
         ),
         fluidRow(
           box(
@@ -337,52 +330,80 @@ body <- dashboardBody(
       includeHTML("content/footer.html")
     ),
     
-
-# Download Data Tab -------------------------------------------------------
-
+    
+    # Download Data Tab -------------------------------------------------------
+    
     tabItem(
       tabName = "download",
-      
       fluidPage(
-        style = "padding: 0 5em;",
-        
-        h2("Download", 
-           style = "padding:1em 0 0 20px;"),
-        h3("1) Exuberance Statistics", 
-           style = "padding:0 0 0 20px;"),
-        br(),
-        fluidRow(
-          tabBox(width = 12, 
-                 side = "left",
-                 tabPanel(dataTableOutput("estimation_price"), 
-                          title = "Real House Price Exuberance Statistics"),
-                 tabPanel(dataTableOutput("estimation_income"), 
-                          title = "House-Price-to-Income Exuberance Statistics"),
-                 tabPanel(dataTableOutput("cv_seq"), 
-                          title = "BSADF Critical Value Sequence Statistics"),
-                 tabPanel(dataTableOutput("cv_table"), 
-                          title = "GSADF Statistics & Critical Values")
-          )
-          
-        ),
-        h3("2) Raw Data", 
-           style = "padding:0 0 0 20px;"),
-        br(),
-        fluidRow(
-          tabBox(width = 12,
-                 side = "left",
-                 tabPanel(dataTableOutput("data_price"), 
-                          title = "Real House Prices"),
-                 tabPanel(dataTableOutput("data_income"), 
-                          title = "House-Price-to-Income Ratio")
-          )
+        navlistPanel(
+          well = TRUE,
+          widths = c(3, 9),
+          "Data",
+          # "---------",
+          tab_panel("data_price", "Real House Prices"),
+          tab_panel("data_income", "House-Price-to-Income Ratio"),
+          "Exuberance Statistics",
+          tab_panel("cv_table", "Exuberance Statistics and Critical Values (GSADF)", 
+                    prefix = "Exuberance Statistics: "),
+          tab_panel("estimation_price", "Real House Prices Exuberance Statistics (BSADF)", 
+                    prefix = "Exuberance Statistics: "),
+          tab_panel("estimation_income", "House-Price-to-Income Exuberance Statistics (BSADF)", 
+                    prefix = "Exuberance Statistics: "),
+          tab_panel("cv_seq", "BSADF Critical Value Sequence Statistics", 
+                  prefix = "Exuberance Statistics: ")
+          # "---------",
+          # tabPanel("Archive", icon = icon("angle-double-right"), 
+          #          box2(width = 12, includeHTML("www/archive-table.html")))
         )
       ),
       includeHTML("content/footer.html")
     ),
     
-# Methodology Tab ---------------------------------------------------------
-
+    
+    # tabItem(
+    #   tabName = "download",
+    #   
+    #   fluidPage(
+    #     style = "padding: 0 5em;",
+    #     
+    #     h2("Download", 
+    #        style = "padding:1em 0 0 20px;"),
+    #     h3("1) Exuberance Statistics", 
+    #        style = "padding:0 0 0 20px;"),
+    #     br(),
+    #     fluidRow(
+    #       tabBox(width = 12, 
+    #              side = "left",
+    #              tabPanel(dataTableOutput("estimation_price"), 
+    #                       title = "Real House Price Exuberance Statistics"),
+    #              tabPanel(dataTableOutput("estimation_income"), 
+    #                       title = "House-Price-to-Income Exuberance Statistics"),
+    #              tabPanel(dataTableOutput("cv_seq"), 
+    #                       title = "BSADF Critical Value Sequence Statistics"),
+    #              tabPanel(dataTableOutput("cv_table"), 
+    #                       title = "GSADF Statistics & Critical Values")
+    #       )
+    #       
+    #     ),
+    #     h3("2) Raw Data", 
+    #        style = "padding:0 0 0 20px;"),
+    #     br(),
+    #     fluidRow(
+    #       tabBox(width = 12,
+    #              side = "left",
+    #              tabPanel(dataTableOutput("data_price"), 
+    #                       title = "Real House Prices"),
+    #              tabPanel(dataTableOutput("data_income"), 
+    #                       title = "House-Price-to-Income Ratio")
+    #       )
+    #     )
+    #   ),
+    #   includeHTML("content/footer.html")
+    # ),
+    
+    # Methodology Tab ---------------------------------------------------------
+    
     tabItem(
       tabName = "methodology",
       includeHTML("content/methodology.html"),
@@ -409,7 +430,7 @@ server <- function(input, output, session) {
     renderPlot({
       plot_var(price, "Aggregate", rect = TRUE,
                rect_data = exuber::datestamp(radf_price, mc_con)[["Aggregate"]]) 
-        
+      
     })
   
   output$plot_income_aggregate <- 
@@ -445,7 +466,7 @@ server <- function(input, output, session) {
       withProgress(
         value = 0.2,
         message = 'Rendering, please wait!', {
-        
+          
           tempReport <- file.path(tempdir(), "report.Rmd")
           file.copy("R/report.Rmd", tempReport, overwrite = TRUE)
           
@@ -467,8 +488,8 @@ server <- function(input, output, session) {
             envir = new.env(parent = globalenv())
           )
           shiny::setProgress(1) 
-          }
-        )
+        }
+      )
     }
   )
   
@@ -539,7 +560,7 @@ server <- function(input, output, session) {
           purrr::pluck(input$country) %>%
           to_yq(radf_price, cv_var = mc_con)
       }else{
-       NULL
+        NULL
       }
     })
   
@@ -615,5 +636,5 @@ statement such as, 'The authors acknowledge use of the dataset described in Mack
 
 # Launch ------------------------------------------------------------------
 
-shinyApp(ui = dashboardPagePlus(title = "International Housing Observatory",
+shinyApp(ui = dashboardPagePlus(skin = "black", title = "Dashboard | UK Housing Observatory",  
                                 header, sidebar, body), server)

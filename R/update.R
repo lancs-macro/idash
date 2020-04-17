@@ -32,5 +32,10 @@ rsconnect::deployApp(
 library(git2r)
 
 repo <- git2r::repository(appDir)
+
+disp_vers <- price[nrow(price), 1][[1]] %>% 
+  zoo::as.yearqtr()
+
 add(repo, ".")
-commit("update version")
+commit(repo, message = glue::glue("update to version {disp_vers}"))
+push(repo, credentials = cred_token()) ##ssh path

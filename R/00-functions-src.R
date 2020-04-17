@@ -53,7 +53,7 @@ my_theme <- theme_light() +
 
 
 plot_var <- function(.data, .var, custom_labels = TRUE, rect = FALSE, 
-                     rect_data = NULL) {
+                     rect_data = NULL, div = 7) {
   g <- .data %>% 
     # mutate(last_obs = ifelse(row_number() > nrow(.) - 1, TRUE, FALSE)) %>% 
     ggplot(aes_string("Date", as.name(.var))) +
@@ -70,7 +70,7 @@ plot_var <- function(.data, .var, custom_labels = TRUE, rect = FALSE,
   }
   
   if(custom_labels){
-    g <- g + scale_custom(object = .data)
+    g <- g + scale_custom(object = .data, div = div)
   }
   g
 }
@@ -166,6 +166,16 @@ to_yq <- function(ds, radf_var, cv_var){
 
 
 
+# download html -----------------------------------------------------------
+
+DT_preview <- function(x, title = NULL) {
+  box2(width = 12, title = title, dataTableOutput(x))
+}
+
+tab_panel <- function(x, title, prefix = "") {
+  tabPanel(title, icon = icon("angle-double-right"), 
+           DT_preview(x, title = paste0(prefix, title)))
+}
 
 # datatable ---------------------------------------------------------------
 
@@ -238,23 +248,24 @@ make_DT_general <- function(x, filename) {
 
 # html --------------------------------------------------------------------
 
-box2 <- function (..., title = NULL, subtitle = NULL, footer = NULL, status = NULL, 
-                  solidHeader = FALSE, background = NULL, width = 6, height = NULL, 
-                  collapsible = FALSE, collapsed = FALSE) 
+box2 <- function(..., title = NULL, subtitle = NULL, footer = NULL, status = NULL, 
+                 solidHeader = FALSE, background = NULL, width = 6, height = NULL, 
+                 popover = FALSE, popover_title = NULL, popover_content = NULL,
+                 data_toggle = "popover", collapsible = FALSE, collapsed = FALSE) 
 {
   boxClass <- "box"
   if (solidHeader || !is.null(background)) {
     boxClass <- paste(boxClass, "box-solid")
   }
   if (!is.null(status)) {
-    validateStatus(status)
+    shinydashboard:::validateStatus(status)
     boxClass <- paste0(boxClass, " box-", status)
   }
   if (collapsible && collapsed) {
     boxClass <- paste(boxClass, "collapsed-box")
   }
   if (!is.null(background)) {
-    validateColor(background)
+    shinydashboard:::validateColor(background)
     boxClass <- paste0(boxClass, " bg-", background)
   }
   style <- NULL
@@ -267,7 +278,7 @@ box2 <- function (..., title = NULL, subtitle = NULL, footer = NULL, status = NU
   }
   subtitleTag <- NULL
   if (!is.null(title)) {
-    subtitleTag <- h4(class = "box-subtitle", subtitle)
+    subtitleTag <- h5(class = "box-subtitle", subtitle)
   }
   collapseTag <- NULL
   if (collapsible) {
@@ -279,9 +290,23 @@ box2 <- function (..., title = NULL, subtitle = NULL, footer = NULL, status = NU
                        tags$button(class = paste0("btn btn-box-tool"), 
                                    `data-widget` = "collapse", shiny::icon(collapseIcon)))
   }
+  popoverTag <- NULL
+  if (popover) {
+    popoverTag <- div(
+      class = "box-tools pull-right", 
+      tags$button(
+        class = paste0("btn btn-box-tool"), 
+        `title` = popover_title,
+        `data-content` = popover_content,
+        `data-trigger` = "focus",
+        `data-placement` = "right",
+        # `data-html` = "true",
+        `data-toggle` = data_toggle, shiny::icon("info"))
+    )
+  }
   headerTag <- NULL
-  if (!is.null(titleTag) || !is.null(collapseTag)) {
-    headerTag <- div(class = "box-header", titleTag, subtitleTag, collapseTag)
+  if (!is.null(titleTag) || !is.null(collapseTag) || !is.null(popoverTag)) {
+    headerTag <- div(class = "box-header", titleTag, subtitleTag, collapseTag, popoverTag)
   }
   div(class = if (!is.null(width)) 
     paste0("col-sm-", width), div(class = boxClass, style = if (!is.null(style)) 
@@ -289,3 +314,19 @@ box2 <- function (..., title = NULL, subtitle = NULL, footer = NULL, status = NU
         div(class = "box-footer", footer)))
 }
 
+note_exuber <- 
+  HTML('<span>There is exuberance when the </span> <span class="textbf"> solid line </span> <span> surpasses the </span><span class="color-red"> dashed line </span>.')
+
+note_ds <- 
+  HTML('Periods of time identified as exuberant by the financial stability analysis.')
+
+note_shade <- 
+  HTML('<span class="color-grey">Shaded areas</span> <span>indicate identified periods of exuberance.</span>')
+
+note_bands <- 
+  HTML('<span>The </span> <span class="color-grey">shaded bands </span><span> refer to the difference between the top and bottom decile of growth rates across all regions in the UK.</span>')
+
+
+column_4 <- function(...) {
+  column(width = 4, ...)
+}

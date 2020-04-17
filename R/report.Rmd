@@ -3,7 +3,8 @@ output: pdf_document
 geometry: "left=3cm,right=3cm,top=2cm,bottom=2cm"
 header-includes:
   - \usepackage{color}
-  - \usepackage[dvipsnames]{xcolor}
+  - \definecolor{airforceblue}{rgb}{0.36, 0.54, 0.66}
+  - \definecolor{lightblue}{rgb}{0.68, 0.85, 0.9}
   - \usepackage{booktabs}
   - \usepackage{sectsty} \allsectionsfont{\centering}
   - \usepackage{paralist} \let\itemize\compactitem
@@ -20,30 +21,35 @@ title: "`r params$country ``r params$version`"
 fontsize: 12pt 
 ---
 
-<!-- \pagenumbering{gobble} -->
-
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = FALSE)
 library(exuber)
 library(knitr)
 library(xtable)
+library(patchwork)
 ```
 
 This page provides figures for real house prices and house-price-to-disposable-income ratios (housing affordability) starting in 1975, exuberance statistics, as well as date-stamping of the specific periods of exuberance.
 
-```{r plot price, fig.width=7, fig.height=3, fig.align='center'}
-plot_var(params$data_price, params$country) +
+```{r plot price, fig.width=7, fig.height=4, fig.align='center'}
+p1 <- plot_var(params$data_price, params$country, div = 4) +
   ggtitle("Real House Prices")
-
-```
-
-```{r plot income, fig.width=7, fig.height=3, fig.align='center'}
-plot_var(params$data_price_income, params$country) +
+p2 <- plot_var(params$data_price_income, params$country, div = 4) +
   ggtitle("House-Price-to-Income Ratio")
+p1 + p2
 shiny::setProgress(0.4)
+
 ```
 
-## \textcolor{MidnightBlue}{Exuberance Statistics}
+<!-- ```{r plot income, fig.width=7, fig.height=3, fig.align='center'} -->
+<!-- plot_var(params$data_price_income, params$country) + -->
+<!--   ggtitle("House-Price-to-Income Ratio") -->
+<!-- shiny::setProgress(0.4) -->
+<!-- ``` -->
+
+\vspace{1cm}
+
+##  $\color{airforceblue}{\text{Exuberance Statistics}}$
 
 ```{r summary, results='asis'}
 
@@ -68,7 +74,18 @@ cat(c("\\begin{table}[!htpb]
 shiny::setProgress(0.6)
 ```
 
-## \textcolor{MidnightBlue}{Date-Stamping Periods of Exuberance}
+\vfill
+
+\center{\textit{ © 2020 International Housing Observatory. All rights reserved}}
+
+
+<!-- SECOND PAGE -->
+
+\newpage
+
+<!-- ## \textcolor{airforceblue}{Date-Stamping Periods of Exuberance Table} -->
+
+## $\color{airforceblue}{\text{Date-Stamping Periods of Exuberance Graph}}$
 
 <!-- \hspace{3cm} Real House Prices \hspace{4cm}  House-Price-to-Income Ratio -->
 
@@ -76,30 +93,30 @@ shiny::setProgress(0.6)
 ```{r autoplot price, fig.width=7, fig.height=3, fig.align='center'}
 
 dg_price <- diagnostics(params$rprice, params$cv)$accepted %in% params$country
-if (any(dg_price)) {
+g1 <- if (any(dg_price)) {
   autoplot_var(radf_var = params$rprice, cv_var = params$cv,
                input = params$country, custom_labels = FALSE) +
   ggtitle("Real House Prices")
 }else{
   NULL_plot(.size = 3)
 }
-```
-
-```{r autoplot income, fig.width=7, fig.height=3, fig.align='center'}
 dg_income <- diagnostics(params$rincome, params$cv)$accepted %in% params$country
-if (any(dg_income)) {
+g2 <- if (any(dg_income)) {
         autoplot_var(radf_var = params$rincome, cv_var = params$cv,
                      input = params$country, custom_labels = FALSE)  +
   ggtitle("House-Price-to-Income Ratio")
 }else{
   NULL_plot(.size = 3)
 }
+g1 + g2 + 
+  plot_annotation(
+    caption = "There is exuberance when the statistic exceeds the critical value.")
+
 shiny::setProgress(0.8) 
 
 ```
 
-## \textcolor{MidnightBlue}{Date-Stamping Periods of Exuberance Table}
-
+## $\color{airforceblue}{\text{Date-Stamping Periods of Exuberance Table}}$
 
 ```{r datestamp, results='asis'}
 
@@ -127,6 +144,12 @@ cat(c("\\begin{table}[!htpb]
 shiny::setProgress(0.9) 
 
 ```
+
+
+<!-- ```{r autoplot income, fig.width=7, fig.height=3, fig.align='center'} -->
+
+<!-- ``` -->
+
 \vfill
 
-\center{\textit{ © 2019 International Housing Observatory. All rights reserverd.}}
+\center{\textit{\small © 2020 International Housing Observatory. All rights reserved}}
