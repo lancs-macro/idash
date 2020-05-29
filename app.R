@@ -9,7 +9,21 @@ suppressMessages({
   library(tidyverse)
   library(DT)
   library(shinyWidgets)
+  library(exuber)
 })
+
+
+# update ------------------------------------------------------------------
+
+# library(later)
+# library(promises)
+# library(future)
+# 
+# auto_shiny <- function(interval = 2*60*60){ # 2 hours 60 minutes 60 seconds
+#   source("script source1")
+#   source("shinyappscript")
+#   later::later(shiny.auto, interval)
+# }
 
 # Set Options -------------------------------------------------------------
 
@@ -21,8 +35,11 @@ for (i in seq_along(path_store_rds)) {
 
 # Source ------------------------------------------------------------------
 
+idx <- tibble(Date = index(radf_price, trunc = FALSE))
+
 suppressMessages({
-  source("R/00-functions-src.R", local = TRUE)$value
+  source("R/00-functions-src.R")
+  # source("R/00-functions-src.R", local = TRUE)$value
 })
 
 # Version -----------------------------------------------------------------
@@ -271,11 +288,11 @@ body <- dashboardBody(
         fluidRow(
           box(
             title = "Real House Prices",
-            tableOutput("table1")
+            dataTableOutput("table1")
           ),
           box(
             title = "House-Price-to-Income Ratio", 
-            tableOutput("table2")
+            dataTableOutput("table2")
           )
         ),
         
@@ -501,28 +518,38 @@ server <- function(input, output, session) {
     plot_var(price_income, input$country)})
   
   output$table1 <-
-    renderTable({
-      summary(radf_price, mc_con) %>% 
-        purrr::pluck(input$country)},
-      striped = TRUE, bordered = TRUE,  
-      width = '100%', rownames = TRUE,
-      align = 'ccccc')
+    DT::renderDataTable(server = FALSE, {
+      DT_summary(
+        summary(radf_price, mc_con) %>% 
+          purrr::pluck(input$country) %>% 
+          mutate(name = toupper(name)) %>% 
+          set_names(c("", "tstat", "90%", "95%", "99%"))
+      )
+    })
   
-  output$table2 <- renderTable({
-    summary(radf_income, mc_con) %>% 
-      purrr::pluck(input$country)},
-    striped = TRUE, bordered = TRUE,  
-    width = '100%', rownames = TRUE,
-    align = 'ccccc')
+  output$table2 <- 
+    DT::renderDataTable(server = FALSE, {
+      DT_summary(
+        summary(radf_income, mc_con) %>% 
+          purrr::pluck(input$country) %>% 
+          mutate(name = toupper(name)) %>% 
+          set_names(c("", "tstat", "90%", "95%", "99%"))
+      )
+    })
+  # output$table2 <- renderTable({
+  #   summary(radf_income, mc_con) %>% 
+  #     purrr::pluck(input$country)},
+  #   striped = TRUE, bordered = TRUE,  
+  #   width = '100%', rownames = TRUE
+  #   # align = 'ccccc'
+  #   )
   
   # autoplot_price
-  
   autoplot_price_reactive <- 
     reactive({
-      if (any(exuber::diagnostics(radf_price, mc_con)$accepted %in% input$country)) {
-        autoplot_var(radf_var = radf_price, 
-                     cv_var = mc_con, 
-                     input = input$country)
+      if (any(exuber::diagnostics(radf_price, mc_con)$positive %in% input$country)) {
+        autoplot(radf_price, mc_con, select_series = input$country) + 
+          ggtitle("") + scale_custom(idx)
       }else{
         NULL_plot()
       }
@@ -534,13 +561,11 @@ server <- function(input, output, session) {
     })
   
   # autoplot_income
-  
   autoplot_income_reactive <- 
     reactive({
-      if (any(exuber::diagnostics(radf_income, mc_con)$accepted %in% input$country)) {
-        autoplot_var(radf_var = radf_income, 
-                     cv_var = mc_con, 
-                     input = input$country)
+      if (any(exuber::diagnostics(radf_income, mc_con)$positive %in% input$country)) {
+        autoplot(radf_income, mc_con, select_series = input$country) + 
+          ggtitle("") + scale_custom(idx)
       }else{
         NULL_plot()
       }
@@ -555,7 +580,7 @@ server <- function(input, output, session) {
   
   table3_reactive <- 
     reactive({
-      if (any(exuber::diagnostics(radf_price, mc_con)$accepted %in% input$country)) {
+      if (any(exuber::diagnostics(radf_price, mc_con)$positive %in% input$country)) {
         exuber::datestamp(radf_price, mc_con) %>%
           purrr::pluck(input$country) %>%
           to_yq(radf_price, cv_var = mc_con)
@@ -574,7 +599,7 @@ server <- function(input, output, session) {
   
   table4_reactive <- 
     reactive({
-      if (any(exuber::diagnostics(radf_income, mc_con)$accepted %in% input$country)) {
+      if (any(exuber::diagnostics(radf_income, mc_con)$positive %in% input$country)) {
         exuber::datestamp(radf_income, mc_con) %>%
           purrr::pluck(input$country) %>%
           to_yq(radf_income, cv_var = mc_con)

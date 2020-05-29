@@ -16,8 +16,7 @@ radf_income <-
   price_income %>% 
   radf(lag = 1)
 
-mc_con <- 
-  mc_cv(NROW(price), opt_bsadf = "conservative")
+mc_con <- radf_crit[[NROW(price)]]
 
 # Summary -----------------------------------------------------------------
 
@@ -64,75 +63,46 @@ analysis_theme <- theme_light() +
 
 # Currently not used
 
-autoplot_price <- 
-  radf_price %>% 
-  autoplot(cv = mc_con, include = TRUE, arrange = FALSE) %>% 
-  map( ~.x + analysis_theme +
-         scale_custom(object = fortify(radf_price))
-  )
-
-# NULL plot when they do not pass the test: bypass include
-autoplot_price[rejected_price] <- NULL_plot(length(rejected_price)) 
-
-autoplot_income <- 
-  radf_income %>% 
-  autoplot(cv = mc_con, include = TRUE, arrange = FALSE) %>% 
-  map( ~.x + analysis_theme +
-         scale_custom(object = fortify(radf_price))
-  )
-
-autoplot_income[rejected_income] <- NULL_plot(length(rejected_income))
-
-for (i in seq_along(autoplot_price)) {
-  autoplot_price[[i]]$layers[[1]]$aes_params$size <- 0.8
-}
-
-for (i in seq_along(autoplot_income)) {
-  autoplot_income[[i]]$layers[[1]]$aes_params$size <- 0.8
-}
+# autoplot_price <- 
+#   radf_price %>% 
+#   autoplot(cv = mc_con, include = TRUE, arrange = FALSE) %>% 
+#   map( ~.x + analysis_theme +
+#          scale_custom(object = fortify(radf_price))
+#   )
+# 
+# # NULL plot when they do not pass the test: bypass include
+# autoplot_price[rejected_price] <- NULL_plot(length(rejected_price)) 
+# 
+# autoplot_income <- 
+#   radf_income %>% 
+#   autoplot(cv = mc_con, include = TRUE, arrange = FALSE) %>% 
+#   map( ~.x + analysis_theme +
+#          scale_custom(object = fortify(radf_price))
+#   )
+# 
+# autoplot_income[rejected_income] <- NULL_plot(length(rejected_income))
+# 
+# for (i in seq_along(autoplot_price)) {
+#   autoplot_price[[i]]$layers[[1]]$aes_params$size <- 0.8
+# }
+# 
+# for (i in seq_along(autoplot_income)) {
+#   autoplot_income[[i]]$layers[[1]]$aes_params$size <- 0.8
+# }
 
 # autoplot datestamp ------------------------------------------------------
+
+idx <- tibble(Date = index(radf_price, trunc = FALSE))
 
 autoplot_datestamp_price <-
   datestamp_price %>%  
   autoplot() +
-  scale_custom(fortify(radf_price)) + 
-  scale_color_viridis_d()
+  scale_custom(idx) 
 
 autoplot_datestamp_income <- 
   datestamp_income %>% 
   autoplot() + 
-  scale_custom(fortify(radf_price)) + 
-  scale_color_viridis_d()
-
-# Overwrite datestamp --------------------------------------------------------
-
-index_yq <- extract_yq(fortify(radf_price)) # Remake into yq
-
-ds_yq <- function(ds) {
-  start <- ds[, 1]
-  start_ind <- which(index_yq$breaks %in% start)
-  start_label <- index_yq[start_ind ,2]
-  
-  end <- ds[, 2]
-  end_ind <- which(index_yq$breaks %in% end)
-  if (anyNA(end)) end_ind <- c(end_ind, NA)
-  end_label <- index_yq[end_ind ,2]
-  
-  ds[, 1] <- start_label 
-  ds[, 2] <- end_label
-  ds
-}
-
-datestamp_price <-
-  radf_price %>% 
-  datestamp(cv = mc_con) %>% 
-  map(ds_yq)
-
-datestamp_income <- 
-  radf_income %>% 
-  datestamp(cv = mc_con) %>% 
-  map(ds_yq)
+  scale_custom(idx) 
 
 
 # Plot -------------------------------------------------------------------
@@ -140,8 +110,7 @@ datestamp_income <-
 # House Prices plots
 plot_price <- list()
 for (i in seq_along(cnames)) {
-  plot_price[[i]] <- ggplot(aes_string("Date", as.name(cnames[i])), 
-                         data = price) +
+  plot_price[[i]] <- ggplot(aes_string("Date", as.name(cnames[i])), data = price) +
     geom_line() + analysis_theme
 }
 names(plot_price) <- cnames
@@ -162,9 +131,7 @@ names(plot_income) <- cnames
 
 plot_income <- 
   plot_income %>% 
-  map( ~.x + analysis_theme +
-         scale_custom(object = fortify(radf_price))
-  )
+  map( ~.x + analysis_theme + scale_custom(object = idx))
 
 # data export -------------------------------------------------------------
 
@@ -206,7 +173,7 @@ store <- c("price", "price_income",
            c("cnames"), 
            "mc_con", "cv_seq", "cv_table",
            glue::glue("estimation_{items}"),
-           glue::glue("autoplot_{items}"),
+           # glue::glue("autoplot_{items}"),
            glue::glue("autoplot_datestamp_{items}"),
            glue::glue("radf_{items}"))
 

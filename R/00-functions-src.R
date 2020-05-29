@@ -14,6 +14,7 @@ NULL_plot <- function(n = 1, .size  = 5) {
 
 # Custom Labels  ----------------------------------------------------------
 
+
 extract_yq <- function(object) {
   yq <- object %>% 
     select_if(lubridate::is.Date) %>% 
@@ -24,20 +25,19 @@ extract_yq <- function(object) {
     rename(breaks = Date)
 }
 
+custom_date <- function(object, variable, div) {
+  yq <- extract_yq(object)
+  seq_slice <- seq(1, NROW(yq), length.out = div)
+  yq %>% 
+    slice(as.integer(seq_slice)) %>% 
+    pull(!!parse_expr(variable))
+}
+
 scale_custom <- function(object, div = 7) {
   require(lubridate)
-  custom_date <- function(object, variable, div) {
-    
-    yq <- extract_yq(object)
-    seq_slice <- seq(1, NROW(yq), length.out = div)
-    yq %>% 
-      slice(seq_slice) %>% 
-      pull(!!parse_expr(variable))
-  }
-  
   scale_x_date(
-    breaks = custom_date(fortify(object), variable = "breaks", div = div),
-    labels = custom_date(fortify(object), variable = "labels", div = div)
+    breaks = custom_date(object, variable = "breaks", div = div),
+    labels = custom_date(object, variable = "labels", div = div)
   )
 }
 
@@ -140,10 +140,9 @@ autoplot_var <- function(radf_var, cv_var, input, custom_labels = TRUE) {
 }
 
 # Datestamp into yq
-
 to_yq <- function(ds, radf_var, cv_var){
-  
-  index_yq <- extract_yq(fortify(radf_var, cv =  cv_var))
+  idx <- tibble(Date = index(radf_var, trunc = FALSE))
+  index_yq <- extract_yq(idx)
   
   ds_yq <- function(ds) {
     start <- ds[, 1]
@@ -204,7 +203,18 @@ specify_buttons <- function(filename) {
   )
 }
   
-
+DT_summary <- function(x) {
+  DT::datatable(
+    x,
+    rownames = FALSE,
+    options = list( 
+      dom = "t",
+      searching = FALSE,
+      ordering = FALSE
+    )
+  ) %>% 
+    DT::formatRound(2:NCOL(x), 3) 
+}
 
 make_DT <- function(x, filename, caption_string = ""){
   DT::datatable(

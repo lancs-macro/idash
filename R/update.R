@@ -1,3 +1,4 @@
+library(shiny)
 source("R/01-Manipulation.R")
 source("R/02-Analysis.R")
 
