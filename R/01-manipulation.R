@@ -7,9 +7,8 @@ full_data <- ihpdr::ihpd_get()
 
 cnames <- pull(full_data, country) %>% 
   unique() %>% 
-  sort(.) %>% 
-  .[-1] %>% 
-  c("Aggregate")
+  sort(.)
+cnames <- cnames[c(3:length(cnames),1,2)]
 
 price <- select(full_data, Date, country, rhpi) %>% 
   pivot_wider(names_from = country, values_from = rhpi)

@@ -19,7 +19,7 @@ rsconnect::deployApp(
   appFiles = appLines,
   account = "lancs-macro", 
   server = "shinyapps.io", 
-  appName = "international-housing-observatory",      
+  appName = "international-housing-observatory-dashboard",      
   appId = 705554, 
   launch.browser = function(url) {         
     message("Deployment completed: ", url)     

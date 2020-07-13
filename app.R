@@ -445,29 +445,129 @@ server <- function(input, output, session) {
   
   output$plot_price_aggregate <- 
     renderPlot({
-      plot_var(price, "Aggregate", rect = TRUE,
-               rect_data = exuber::datestamp(radf_price, mc_con)[["Aggregate"]]) 
+      price %>% 
+        select(Date, starts_with("Aggregate")) %>% 
+        set_names(c("Date", "Fixed Weights (2005)", "Dynamic Weights")) %>% 
+        pivot_longer(-Date) %>% 
+        ggplot(aes(Date, value, col = name)) + 
+        geom_line(size = 0.8) +
+        geom_rect(
+          mapping = aes(xmin = Start, xmax = End, ymin = -Inf, ymax = +Inf),
+          data = exuber::datestamp(radf_price, mc_con)[["Aggregate - Dynamic Weights"]], 
+          inherit.aes =FALSE, fill = "grey70", alpha = 0.55
+        ) +
+        scale_color_manual(values = c("black", "blue")) +
+        my_theme +
+        theme(
+          legend.background = element_blank(),
+          legend.title = element_blank(),
+          legend.position = c(0.15, 0.85),
+          axis.title.y = element_blank()
+        ) +
+        scale_custom(object = price, div = 7)
       
     })
   
   output$plot_income_aggregate <- 
     renderPlot({
-      plot_var(price_income, "Aggregate", rect = TRUE,
-               rect_data = exuber::datestamp(radf_income, mc_con)[["Aggregate"]])
+      price_income %>% 
+        select(Date, starts_with("Aggregate")) %>% 
+        set_names(c("Date", "Fixed Weights (2005)", "Dynamic Weights")) %>% 
+        pivot_longer(-Date) %>% 
+        ggplot(aes(Date, value, col = name)) + 
+        geom_line(size = 0.8) +
+        geom_rect(
+          mapping = aes(xmin = Start, xmax = End, ymin = -Inf, ymax = +Inf),
+          data = exuber::datestamp(radf_income, mc_con)[["Aggregate - Dynamic Weights"]], 
+          inherit.aes =FALSE, fill = "grey70", alpha = 0.55
+        ) +
+        scale_color_manual(values = c("black", "blue")) +
+        my_theme +
+        theme(
+          legend.background = element_blank(),
+          legend.title = element_blank(),
+          legend.position = c(0.85, 0.85),
+          axis.title.y = element_blank()
+        ) +
+        scale_custom(object = price_income, div = 7)
     })
   
   output$plot_growth_price_aggregate <- 
     renderPlot({
-      plot_growth_var(
-        price, "Aggregate",
-        rect_data = exuber::datestamp(radf_price, mc_con)[["Aggregate"]]) 
+      
+      growth_price <- price %>% 
+        mutate_at(vars(-Date), growth_rate) %>% 
+        tidyr::drop_na() 
+      quantiles <- growth_price %>%
+        select(-starts_with("Aggregate")) %>%
+        pivot_longer(-Date) %>%
+        group_by(Date) %>%
+        summarise(q75 = quantile(value, 0.25), q25 = quantile(value, 0.75))
+      
+      suppressWarnings({
+        growth_price %>% 
+          select(Date, starts_with("Aggregate")) %>% 
+          set_names(c("Date", "Fixed Weights (2005)", "Dynamic Weights")) %>% 
+          pivot_longer(-Date) %>% 
+          full_join(quantiles, by = "Date") %>%
+          ggplot(aes(Date, value, col = name)) + 
+          
+          geom_rect(
+            mapping = aes(xmin = Start, xmax = End, ymin = -Inf, ymax = +Inf),
+            data = exuber::datestamp(radf_price, mc_con)[["Aggregate - Dynamic Weights"]], 
+            inherit.aes = FALSE, fill = "grey70", alpha = 0.55) +
+          geom_ribbon(aes(ymin = q25, ymax = q75), fill = "#174B97", alpha = 0.3, colour = NA) +
+          ylab("% Quarter on Quarter") +
+          scale_color_manual(values = c("black", "blue")) +
+          geom_line(size = 0.8) + 
+          my_theme +
+          theme(
+            legend.background = element_blank(),
+            legend.title = element_blank(),
+            legend.position = c(0.15, 0.85),
+            axis.title.y = element_blank()
+          ) +
+          scale_custom(object = growth_price, div = 7)
+      })
+    
     })
   
   output$plot_growth_income_aggregate <- 
     renderPlot({
-      plot_growth_var(
-        price_income, "Aggregate",
-        rect_data = exuber::datestamp(radf_income, mc_con)[["Aggregate"]])
+      growth_income <- price_income %>% 
+        mutate_at(vars(-Date), growth_rate) %>% 
+        tidyr::drop_na() 
+      quantiles <- growth_income %>%
+        select(-starts_with("Aggregate")) %>%
+        pivot_longer(-Date) %>%
+        group_by(Date) %>%
+        summarise(q75 = quantile(value, 0.25), q25 = quantile(value, 0.75))
+      
+      suppressWarnings({
+        growth_income %>% 
+          select(Date, starts_with("Aggregate")) %>% 
+          set_names(c("Date", "Fixed Weights (2005)", "Dynamic Weights")) %>% 
+          pivot_longer(-Date) %>% 
+          full_join(quantiles, by = "Date") %>%
+          ggplot(aes(Date, value, col = name)) + 
+          
+          geom_rect(
+            mapping = aes(xmin = Start, xmax = End, ymin = -Inf, ymax = +Inf),
+            data = exuber::datestamp(radf_price, mc_con)[["Aggregate - Dynamic Weights"]], 
+            inherit.aes = FALSE, fill = "grey70", alpha = 0.55) +
+          geom_ribbon(aes(ymin = q25, ymax = q75), fill = "#174B97", alpha = 0.3, colour = NA) +
+          ylab("% Quarter on Quarter") +
+          scale_color_manual(values = c("black", "blue")) +
+          geom_line(size = 0.8) + 
+          my_theme +
+          theme(
+            legend.background = element_blank(),
+            legend.title = element_blank(),
+            legend.position = c(0.15, 0.85),
+            axis.title.y = element_blank()
+          ) +
+          scale_custom(object = growth_income, div = 7)
+      })
     })
   
   # Analysis ----------------------------------------------------------------
