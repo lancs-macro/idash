@@ -5,6 +5,10 @@
       font-weight:600;
   }
   
+  a{
+    line-height: 1.8;
+  }
+  
   .box {
     border-top: 3px solid #314658;
   }

@@ -1,5 +1,6 @@
 
 library(rlang)
+library(ggplot2)
 
 NULL_plot <- function(n = 1, .size  = 5) {
   text <- "The series does not exhibit exuberant behavior"

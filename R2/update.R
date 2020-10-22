@@ -1,6 +1,7 @@
 library(shiny)
-source("R/01-Manipulation.R")
-source("R/02-Analysis.R")
+source("R2/00-functions-src.R")
+source("R2/01-Manipulation.R")
+source("R2/02-Analysis.R")
 
 options(
   repos = structure(

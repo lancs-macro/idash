@@ -38,7 +38,7 @@ for (i in seq_along(path_store_rds)) {
 idx <- tibble(Date = index(radf_price, trunc = FALSE))
 
 suppressMessages({
-  source("R/00-functions-src.R")
+  source("R2/00-functions-src.R")
   # source("R/00-functions-src.R", local = TRUE)$value
 })
 
