@@ -1,0 +1,12 @@
+name: idash
+title: idash
+username:
+account: lancs-macro
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3484626
+bundleId: 4112011
+url: https://lancs-macro.shinyapps.io/idash/
+when: 1610972497.43434
+asMultiple: FALSE
+asStatic: FALSE

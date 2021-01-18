@@ -502,7 +502,10 @@ server <- function(input, output, session) {
         select(-starts_with("Aggregate")) %>%
         pivot_longer(-Date) %>%
         group_by(Date) %>%
-        summarise(q75 = quantile(value, 0.25), q25 = quantile(value, 0.75))
+        summarise(
+          q75 = quantile(value, 0.25), 
+          q25 = quantile(value, 0.75),
+          .groups = "drop")
       
       suppressWarnings({
         growth_price %>% 
@@ -541,7 +544,10 @@ server <- function(input, output, session) {
         select(-starts_with("Aggregate")) %>%
         pivot_longer(-Date) %>%
         group_by(Date) %>%
-        summarise(q75 = quantile(value, 0.25), q25 = quantile(value, 0.75))
+        summarise(
+          q75 = quantile(value, 0.25), 
+          q25 = quantile(value, 0.75),
+          .groups = "drop")
       
       suppressWarnings({
         growth_income %>% 
