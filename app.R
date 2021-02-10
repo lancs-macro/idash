@@ -591,7 +591,7 @@ server <- function(input, output, session) {
         message = 'Rendering, please wait!', {
           
           tempReport <- file.path(tempdir(), "report.Rmd")
-          file.copy("R/report.Rmd", tempReport, overwrite = TRUE)
+          file.copy("R2/report.Rmd", tempReport, overwrite = TRUE)
           
           # Set up parameters to pass to Rmd document
           params <- list(
