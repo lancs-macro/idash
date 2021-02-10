@@ -22,7 +22,7 @@ rsconnect::deployApp(
   account = "lancs-macro", 
   server = "shinyapps.io", 
   appName = "idash",
-  appId = 197422, 
+  appId = 3484626, 
   launch.browser = function(url) {         
     message("Deployment completed: ", url)     
     }, 
@@ -36,6 +36,7 @@ rsconnect::deployApp(
 # push to github ----------------------------------------------------------
 
 library(gert)
+
 
 # library(git2r)
 
