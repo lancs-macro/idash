@@ -37,10 +37,10 @@ for (i in seq_along(path_store_rds)) {
 
 idx <- tibble(Date = index(radf_price, trunc = FALSE))
 
-suppressMessages({
-  source("R2/00-functions-src.R")
-  # source("R/00-functions-src.R", local = TRUE)$value
-})
+# suppressMessages({
+#   source("R2/00-functions-src.R")
+#   # source("R/00-functions-src.R", local = TRUE)$value
+# })
 
 # Version -----------------------------------------------------------------
 
@@ -49,7 +49,7 @@ vers <- price[nrow(price), 1][[1]] %>%
 
 # Header ------------------------------------------------------------------
 
-header <- dashboardHeaderPlus(
+header <- dashboardHeader(
   titleWidth = 430,
   title = shiny::tagList(
     span(
@@ -277,7 +277,7 @@ body <- dashboardBody(
         ),
         
         fluidRow(
-          box(
+          box2(
             width = 12,
             background = "blue",
             p("Exuberance Statistics", 
@@ -297,7 +297,7 @@ body <- dashboardBody(
         ),
         
         fluidRow(
-          box(
+          box2(
             width = 12,
             background = "blue",
             p("Date-Stamping Periods of Exuberance", 
@@ -326,7 +326,7 @@ body <- dashboardBody(
         br(),
         
         fluidRow(
-          box(
+          box2(
             width = 12,
             background = "blue",
             p("Date-Stamping Periods of Exuberance Table", 
@@ -591,7 +591,7 @@ server <- function(input, output, session) {
         message = 'Rendering, please wait!', {
           
           tempReport <- file.path(tempdir(), "report.Rmd")
-          file.copy("R2/report.Rmd", tempReport, overwrite = TRUE)
+          file.copy("www/report.Rmd", tempReport, overwrite = TRUE)
           
           # Set up parameters to pass to Rmd document
           params <- list(
@@ -654,6 +654,7 @@ server <- function(input, output, session) {
   autoplot_price_reactive <- 
     reactive({
       if (any(exuber::diagnostics(radf_price, mc_con)$positive %in% input$country)) {
+        # make_autoplotly(radf_price, mc_con, ctry = input$country)
         autoplot(radf_price, mc_con, select_series = input$country) + 
           ggtitle("") + scale_custom(idx)
       }else{
@@ -767,5 +768,5 @@ statement such as, 'The authors acknowledge use of the dataset described in Mack
 
 # Launch ------------------------------------------------------------------
 
-shinyApp(ui = dashboardPagePlus(skin = "black", title = "Dashboard | UK Housing Observatory",  
+shinyApp(ui = dashboardPage(skin = "black", title = "Dashboard | UK Housing Observatory",  
                                 header, sidebar, body), server)
