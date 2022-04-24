@@ -1,12 +1,13 @@
 name: idash
-title: International Housing Observatory Dashboard
+title: idash
 username:
 account: lancs-macro
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 3484626
-bundleId: 4560013
+bundleId: 5830618
 url: https://lancs-macro.shinyapps.io/idash/
-when: 1620214208.85194
+when: 1650762914.12161
+lastSyncTime: 1650762914.12161
 asMultiple: FALSE
 asStatic: FALSE

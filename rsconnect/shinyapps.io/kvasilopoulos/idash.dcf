@@ -1,0 +1,13 @@
+name: idash
+title: idash
+username:
+account: kvasilopoulos
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4122796
+bundleId: 5013720
+url: https://kvasilopoulos.shinyapps.io/idash/
+when: 1631140819.54163
+lastSyncTime: 1631140819.54163
+asMultiple: FALSE
+asStatic: FALSE
