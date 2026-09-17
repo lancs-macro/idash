@@ -103,7 +103,7 @@ cv_table <-
 
 idx <- tibble(Date = index(radf_price, trunc = FALSE))
 
-cnames <- series_names(radf_price)
+cnames <- sort(series_names(radf_price))
 
 vers <- price[nrow(price), 1][[1]] %>%
   zoo::as.yearqtr()
