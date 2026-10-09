@@ -143,8 +143,8 @@ ds_yq <- function(ds, index_yq) {
   start_label <- index_yq[start_ind, 2]
 
   peak <- ds[, 2]
-  peak_ind <- which(index_yq$breaks %in% start)
-  peak_label <- index_yq[start_ind, 2]
+  peak_ind <- which(index_yq$breaks %in% peak)
+  peak_label <- index_yq[peak_ind, 2]
 
   end <- ds[, 3]
   end_ind <- which(index_yq$breaks %in% end)
