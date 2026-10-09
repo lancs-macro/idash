@@ -93,7 +93,8 @@ cv_table <-
     `90% Critical Values` = mc_con$gsadf_cv[1],
     `95% Critical Values` = mc_con$gsadf_cv[2],
     `99% Critical Values` = mc_con$gsadf_cv[3]
-  )
+  ) %>%
+  arrange(Countries)
 
 
 # * Version -----------------------------------------------------------------
@@ -502,18 +503,20 @@ server <- function(input, output, session) {
 
   output$autoplot_datestamp_price <-
     renderPlot({
-      radf_price %>%
+      (radf_price %>%
         datestamp(cv = mc_con) %>%
         autoplot() +
-        scale_custom(idx)
+        scale_custom(idx)) %>%
+        alpha_order_y()
     })
 
   output$autoplot_datestamp_income <-
     renderPlot({
-      radf_income %>%
+      (radf_income %>%
         datestamp(cv = mc_con) %>%
         autoplot() +
-        scale_custom(idx)
+        scale_custom(idx)) %>%
+        alpha_order_y()
     })
 
   output$plot_price_aggregate <-
@@ -988,21 +991,21 @@ statement such as, 'The authors acknowledge use of the dataset described in Mack
   #_ Raw ----
 
   output$data_price <- DT::renderDataTable(server = FALSE, {
-    make_DT(trans_yqtr(price, input$go_yqtr), "price", citation_data)
+    make_DT(trans_yqtr(alpha_order_cols(price), input$go_yqtr), "price", citation_data)
   })
 
   output$data_income <- DT::renderDataTable(server = FALSE, {
-    make_DT(trans_yqtr(price_income, input$go_yqtr), "income", citation_data)
+    make_DT(trans_yqtr(alpha_order_cols(price_income), input$go_yqtr), "income", citation_data)
   })
 
   #_ Estimation Statistics and Critical Values ----
 
   output$estimation_price <- DT::renderDataTable(server = FALSE, {
-    make_DT(trans_yqtr(estimation_price, input$go_yqtr), "estimation-price", citation_estimation)
+    make_DT(trans_yqtr(alpha_order_cols(estimation_price), input$go_yqtr), "estimation-price", citation_estimation)
   })
 
   output$estimation_income <- DT::renderDataTable(server = FALSE, {
-    make_DT(trans_yqtr(estimation_income, input$go_yqtr), "estimation-income", citation_estimation)
+    make_DT(trans_yqtr(alpha_order_cols(estimation_income), input$go_yqtr), "estimation-income", citation_estimation)
   })
 
   output$cv_seq <- DT::renderDataTable(server = FALSE, {

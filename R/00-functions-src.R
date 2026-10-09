@@ -40,6 +40,18 @@ scale_custom <- function(object, div = 7) {
   )
 }
 
+# Orders a ds_radf autoplot's series axis alphabetically (A-Z top to bottom),
+# overriding exuber's internal ordering which follows the raw data column order.
+alpha_order_y <- function(gg) {
+  ids <- unique(unlist(lapply(gg$layers, function(l) as.character(l$data$id))))
+  gg + scale_y_discrete(limits = sort(ids))
+}
+
+# Reorders a wide data frame's columns alphabetically, keeping `first` (e.g. Date) in place.
+alpha_order_cols <- function(df, first = "Date") {
+  df %>% select(all_of(first), sort(setdiff(names(df), first)))
+}
+
 
 # Plot Normal Series ------------------------------------------------------
 
