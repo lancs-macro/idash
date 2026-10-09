@@ -1,7 +1,7 @@
 ui_exuber_fundamentals <- function() {
   tabItem(
     tabName = "exuberance2",
-    
+
     box2(
       title = "House Price to Rent",
       popover = TRUE,
@@ -10,8 +10,7 @@ ui_exuber_fundamentals <- function() {
       width = 12,
       plotOutput("plot_exuber_fundamentals", height = 1200)
     ),
-    
+
     includeHTML("www/footer.html")
   )
-  
 }
