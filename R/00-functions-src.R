@@ -44,7 +44,7 @@ scale_custom <- function(object, div = 7) {
 # overriding exuber's internal ordering which follows the raw data column order.
 alpha_order_y <- function(gg) {
   ids <- unique(unlist(lapply(gg$layers, function(l) as.character(l$data$id))))
-  gg + scale_y_discrete(limits = sort(ids))
+  gg + scale_y_discrete(limits = rev(sort(ids)))
 }
 
 # Reorders a wide data frame's columns alphabetically, keeping `first` (e.g. Date) in place.
