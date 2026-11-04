@@ -14,37 +14,41 @@ suppressMessages({
 
 # * Download ------------------------------------------------------------------
 
-rel <- "https://api.housing-observatory.com/datasets/int/index.json" %>%
+# Temporary: the workers.dev address, because some resolvers (Posit) still hold the old nameservers of
+# housing-observatory.com. Switch back to "https://api.housing-observatory.com" once api resolves there.
+API_URL <- "https://housing-observatory-api.k-vasilopoulo.workers.dev"
+
+rel <- glue::glue("{API_URL}/datasets/int/index.json") %>%
   jsonlite::read_json(., simplifyVector = TRUE) %>%
   .$releases %>%
   as.vector() %>%
   .[1]
 
-price <- glue::glue("https://api.housing-observatory.com/datasets/int/{rel}/rhpi.json") %>%
+price <- glue::glue("{API_URL}/datasets/int/{rel}/rhpi.json") %>%
   jsonlite::read_json(., simplifyVector = TRUE) %>%
   as_tibble() %>%
   mutate(Date = as.Date(Date))
 
 
-radf_price <- glue::glue("https://api.housing-observatory.com/datasets/int/{rel}/rhpi-radf.json") %>%
+radf_price <- glue::glue("{API_URL}/datasets/int/{rel}/rhpi-radf.json") %>%
   read_lines() %>%
   jsonlite::unserializeJSON(.)
 
 
-price_income <- glue::glue("https://api.housing-observatory.com/datasets/int/{rel}/pti.json") %>%
+price_income <- glue::glue("{API_URL}/datasets/int/{rel}/pti.json") %>%
   jsonlite::read_json(., simplifyVector = TRUE) %>%
   as_tibble() %>%
   mutate(Date = as.Date(Date))
 
 
-radf_income <- glue::glue("https://api.housing-observatory.com/datasets/int/{rel}/pti-radf.json") %>%
+radf_income <- glue::glue("{API_URL}/datasets/int/{rel}/pti-radf.json") %>%
   read_lines() %>%
   jsonlite::unserializeJSON(.)
 
 mc_con <- radf_crit[[NROW(price)]]
 
 psyivx_data <-
-  glue::glue("https://api.housing-observatory.com/datasets/int/{rel}/psyivx-data.json") %>%
+  glue::glue("{API_URL}/datasets/int/{rel}/psyivx-data.json") %>%
   jsonlite::read_json(., simplifyVector = TRUE) %>%
   as_tibble() %>%
   mutate(
@@ -54,7 +58,7 @@ psyivx_data <-
   arrange(country, Date)
 
 psyivx_ds <-
-  glue::glue("https://api.housing-observatory.com/datasets/int/{rel}/psyivx-ds.json") %>%
+  glue::glue("{API_URL}/datasets/int/{rel}/psyivx-ds.json") %>%
   jsonlite::read_json(., simplifyVector = TRUE) %>%
   mutate(Start = as.Date(Start), End = as.Date(End)) %>%
   filter(Signal == "positive")
