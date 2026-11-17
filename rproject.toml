@@ -133,8 +133,9 @@ dependencies = [
     { name = "xml2", repository = "CRAN" },
     { name = "xtable", repository = "CRAN" },
     { name = "yaml", repository = "CRAN" },
-    { name = "ivx", git = "https://github.com/kvasilopoulos/ivx", branch = "master" },
+    { name = "ivx", git = "https://github.com/kvasilopoulos/ivx", branch = "main" },
     "readxl",
     "zoo",
     "rmarkdown",
+    "shinylive",
 ]

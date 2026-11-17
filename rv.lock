@@ -96,6 +96,18 @@ force_source = false
 dependencies = []
 
 [[packages]]
+name = "archive"
+version = "1.1.14"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = [
+    "cli",
+    "glue",
+    "rlang",
+    "tibble",
+]
+
+[[packages]]
 name = "askpass"
 version = "1.2.1"
 source = { repository = "https://cran.rstudio.com/" }
@@ -143,6 +155,13 @@ dependencies = [
     "rlang",
     { name = "vctrs", requirement = "(>= 0.2.1)" },
 ]
+
+[[packages]]
+name = "brio"
+version = "1.1.5"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = []
 
 [[packages]]
 name = "broom"
@@ -317,6 +336,16 @@ dependencies = [
 ]
 
 [[packages]]
+name = "desc"
+version = "1.4.3"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = [
+    "cli",
+    "R6",
+]
+
+[[packages]]
 name = "digest"
 version = "0.6.39"
 source = { repository = "https://cran.rstudio.com/" }
@@ -440,6 +469,13 @@ force_source = false
 dependencies = []
 
 [[packages]]
+name = "filelock"
+version = "1.0.3"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = []
+
+[[packages]]
 name = "fontawesome"
 version = "0.5.3"
 source = { repository = "https://cran.rstudio.com/" }
@@ -556,6 +592,29 @@ dependencies = [
     { name = "vctrs", requirement = "(>= 0.6.0)" },
     { name = "withr", requirement = "(>= 2.5.0)" },
 ]
+
+[[packages]]
+name = "gh"
+version = "1.6.1"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = [
+    { name = "cli", requirement = "(>= 3.0.1)" },
+    "gitcreds",
+    "glue",
+    { name = "httr2", requirement = "(>= 1.0.6)" },
+    "ini",
+    "jsonlite",
+    "lifecycle",
+    { name = "rlang", requirement = "(>= 1.1.0)" },
+]
+
+[[packages]]
+name = "gitcreds"
+version = "0.1.2"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = []
 
 [[packages]]
 name = "globals"
@@ -731,6 +790,24 @@ dependencies = [
 ]
 
 [[packages]]
+name = "httr2"
+version = "1.3.0"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = [
+    { name = "cli", requirement = "(>= 3.0.0)" },
+    { name = "curl", requirement = "(>= 6.4.0)" },
+    "glue",
+    "lifecycle",
+    "magrittr",
+    "openssl",
+    "R6",
+    { name = "rlang", requirement = "(>= 1.3.0)" },
+    { name = "vctrs", requirement = "(>= 0.6.3)" },
+    "withr",
+]
+
+[[packages]]
 name = "ids"
 version = "1.0.1"
 source = { repository = "https://cran.rstudio.com/" }
@@ -739,6 +816,13 @@ dependencies = [
     "openssl",
     "uuid",
 ]
+
+[[packages]]
+name = "ini"
+version = "0.3.1"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = []
 
 [[packages]]
 name = "isoband"
@@ -761,7 +845,7 @@ dependencies = []
 [[packages]]
 name = "ivx"
 version = "2.0.0"
-source = { git = "https://github.com/kvasilopoulos/ivx", sha = "533492e3dea143449f1e69e65e3f81d035fc2693", branch = "master" }
+source = { git = "https://github.com/kvasilopoulos/ivx", sha = "f54bb860447966972bb9ddd5792fd90d1b0a7754", branch = "main" }
 force_source = true
 dependencies = [
     { name = "Rcpp", requirement = "(>= 0.12.18)" },
@@ -842,6 +926,13 @@ dependencies = [
 [[packages]]
 name = "listenv"
 version = "1.0.0"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = []
+
+[[packages]]
+name = "lpSolve"
+version = "5.6.23"
 source = { repository = "https://cran.rstudio.com/" }
 force_source = false
 dependencies = []
@@ -947,11 +1038,60 @@ dependencies = [
 ]
 
 [[packages]]
+name = "pkgbuild"
+version = "1.4.8"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = [
+    { name = "callr", requirement = "(>= 3.2.0)" },
+    { name = "cli", requirement = "(>= 3.4.0)" },
+    "desc",
+    "processx",
+    "R6",
+]
+
+[[packages]]
+name = "pkgcache"
+version = "2.2.5"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = [
+    { name = "callr", requirement = "(>= 2.0.4.9000)" },
+    { name = "cli", requirement = "(>= 3.2.0)" },
+    { name = "curl", requirement = "(>= 3.2)" },
+    "filelock",
+    "jsonlite",
+    { name = "processx", requirement = "(>= 3.3.0.9001)" },
+    "R6",
+]
+
+[[packages]]
 name = "pkgconfig"
 version = "2.0.3"
 source = { repository = "https://cran.rstudio.com/" }
 force_source = false
 dependencies = []
+
+[[packages]]
+name = "pkgdepends"
+version = "0.9.1"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = [
+    { name = "callr", requirement = "(>= 3.3.1)" },
+    { name = "cli", requirement = "(>= 3.6.0)" },
+    "curl",
+    { name = "desc", requirement = "(>= 1.4.3)" },
+    { name = "filelock", requirement = "(>= 1.0.2)" },
+    "jsonlite",
+    "lpSolve",
+    { name = "pkgbuild", requirement = "(>= 1.0.2)" },
+    { name = "pkgcache", requirement = "(>= 2.2.0)" },
+    { name = "processx", requirement = "(>= 3.4.2)" },
+    "ps",
+    "R6",
+    { name = "zip", requirement = "(>= 2.3.0)" },
+]
 
 [[packages]]
 name = "prettyunits"
@@ -1301,6 +1441,29 @@ dependencies = [
 ]
 
 [[packages]]
+name = "shinylive"
+version = "0.5.0"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = [
+    "archive",
+    "brio",
+    "cli",
+    "fs",
+    "gh",
+    "glue",
+    { name = "httr2", requirement = "(>= 1.0.0)" },
+    "jsonlite",
+    "lifecycle",
+    "pkgdepends",
+    "rappdirs",
+    "renv",
+    { name = "rlang", requirement = "(>= 1.1.0)" },
+    "whisker",
+    "withr",
+]
+
+[[packages]]
 name = "snow"
 version = "0.4-4"
 source = { repository = "https://cran.rstudio.com/" }
@@ -1566,6 +1729,13 @@ dependencies = [
 ]
 
 [[packages]]
+name = "whisker"
+version = "0.4.1"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = []
+
+[[packages]]
 name = "withr"
 version = "3.0.3"
 source = { repository = "https://cran.rstudio.com/" }
@@ -1602,6 +1772,15 @@ version = "2.3.12"
 source = { repository = "https://cran.rstudio.com/" }
 force_source = false
 dependencies = []
+
+[[packages]]
+name = "zip"
+version = "3.0.2"
+source = { repository = "https://cran.rstudio.com/" }
+force_source = false
+dependencies = [
+    "cli",
+]
 
 [[packages]]
 name = "zoo"
